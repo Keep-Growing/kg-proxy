@@ -3,7 +3,7 @@ const nextConfig = {
     return {
       fallback: [{
         source: '/:path*',
-        destination: 'https://keepgrowing.squarespace.com/:path*'
+        destination: 'https://bamboo-celery-eayp.squarespace.com/:path*'
       }]
     };
   }
