@@ -26,20 +26,7 @@ export async function middleware(request) {
   const ghostUrl = `https://${GHOST_HOST}${ghostPath}${search}`;
 
   try {
-    const res = await fetch(ghostUrl, { redirect: 'manual' });
-
-    if (res.status >= 300 && res.status < 400) {
-      const loc = res.headers.get('location');
-      if (loc) {
-        let newLoc = loc.replace(/^https?:\/\/blog-conseils-strategie-croissance\.ghost\.io/, '');
-        if (newLoc.startsWith('/') && !newLoc.startsWith(BLOG_PATH)) {
-          newLoc = BLOG_PATH + (newLoc === '/' ? '' : newLoc);
-        }
-        const target = newLoc.startsWith('http') ? newLoc : new URL(newLoc, request.url).toString();
-        return NextResponse.redirect(target, res.status);
-      }
-    }
-
+    const res = await fetch(ghostUrl, { redirect: 'follow' });
     const ct = res.headers.get('content-type') || '';
 
     if (ct.includes('text/html')) {
@@ -66,5 +53,5 @@ export async function middleware(request) {
 }
 
 export const config = {
-  matcher: ['/blog-conseils-strategie-croissance', '/blog-conseils-strategie-croissance/:path*']
+  matcher: '/blog-conseils-strategie-croissance(.*)'
 };
