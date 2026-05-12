@@ -6,6 +6,9 @@ const BLOG_PATH = '/blog-conseils-strategie-croissance';
 const PUBLIC_HOST = 'keepgrowing.fr';
 const PUBLIC_BASE = `https://${PUBLIC_HOST}${BLOG_PATH}`;
 
+// Keep Growing brand logo for OG/Twitter sharing when Ghost has no custom image
+const KG_OG_FALLBACK = 'https://static1.squarespace.com/static/671e09206ef0e92e89d66701/t/69530af543467e5d367d1359/1732363625778/logo-keepgrowing-fond-blanc.jpg?format=1500w';
+
 function rewriteBody(text) {
   return text
     .replace(/https?:\/\/blog-conseils-strategie-croissance\.ghost\.io/g, PUBLIC_BASE)
@@ -15,7 +18,9 @@ function rewriteBody(text) {
 function rewriteHtml(html) {
   return rewriteBody(html)
     .replace(/(href|src|action|content|data-src|data-href)="\/(?!\/)/g, `$1="${BLOG_PATH}/`)
-    .replace(/(srcset)="\/(?!\/)/g, `$1="${BLOG_PATH}/`);
+    .replace(/(srcset)="\/(?!\/)/g, `$1="${BLOG_PATH}/`)
+    // Replace Ghost default publication-cover.jpg with Keep Growing brand image
+    .replace(/https:\/\/static\.ghost\.org\/v\d+\.\d+\.\d+\/images\/publication-cover\.jpg/g, KG_OG_FALLBACK);
 }
 
 function addTrailingSlashesToSitemap(xml) {
