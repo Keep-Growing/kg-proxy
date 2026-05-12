@@ -93,8 +93,21 @@ function addTrailingSlashesToSitemap(xml) {
   });
 }
 
+const INDEXNOW_KEY = '2b3c37d13ada98fe63c1cb99c4dfd1a7';
+
 export async function middleware(request) {
   const { pathname, search } = request.nextUrl;
+
+  // IndexNow key file at site root — required to authenticate IndexNow submissions
+  if (pathname === `/${INDEXNOW_KEY}.txt` || pathname === `/${INDEXNOW_KEY}.txt/`) {
+    return new NextResponse(INDEXNOW_KEY, {
+      status: 200,
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Cache-Control': 'public, max-age=86400, s-maxage=86400'
+      }
+    });
+  }
 
   // Sitemap rewrite: trailing slash + remove non-indexable patterns (tag/author/page-N)
   if (pathname === '/sitemap.xml' || pathname === '/sitemap.xml/') {
@@ -151,5 +164,11 @@ export async function middleware(request) {
 }
 
 export const config = {
-  matcher: ['/blog-conseils-strategie-croissance(.*)', '/sitemap.xml', '/sitemap.xml/']
+  matcher: [
+    '/blog-conseils-strategie-croissance(.*)',
+    '/sitemap.xml',
+    '/sitemap.xml/',
+    '/2b3c37d13ada98fe63c1cb99c4dfd1a7.txt',
+    '/2b3c37d13ada98fe63c1cb99c4dfd1a7.txt/'
+  ]
 };
