@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 
 const GHOST_HOST = 'blog-conseils-strategie-croissance.ghost.io';
+const SQUARESPACE_HOST = 'bamboo-celery-eayp.squarespace.com';
 const BLOG_PATH = '/blog-conseils-strategie-croissance';
 const PUBLIC_HOST = 'keepgrowing.fr';
 const PUBLIC_BASE = `https://${PUBLIC_HOST}${BLOG_PATH}`;
@@ -17,8 +18,40 @@ function rewriteHtml(html) {
     .replace(/(srcset)="\/(?!\/)/g, `$1="${BLOG_PATH}/`);
 }
 
+function addTrailingSlashesToSitemap(xml) {
+  return xml.replace(/<loc>(https?:\/\/[^<]+)<\/loc>/g, (match, url) => {
+    try {
+      const u = new URL(url);
+      if (u.hostname !== PUBLIC_HOST) return match;
+      if (u.pathname === '/' || u.pathname.endsWith('/')) return match;
+      if (/\.[a-z0-9]{1,5}$/i.test(u.pathname)) return match;
+      u.pathname += '/';
+      return `<loc>${u.toString()}</loc>`;
+    } catch {
+      return match;
+    }
+  });
+}
+
 export async function middleware(request) {
   const { pathname, search } = request.nextUrl;
+
+  // Sitemap rewrite: ensure all URLs have trailing slash to match canonicals
+  if (pathname === '/sitemap.xml' || pathname === '/sitemap.xml/') {
+    try {
+      const res = await fetch(`https://${SQUARESPACE_HOST}/sitemap.xml`, { redirect: 'follow' });
+      const ct = res.headers.get('content-type') || 'application/xml; charset=utf-8';
+      const xml = await res.text();
+      return new NextResponse(addTrailingSlashesToSitemap(xml), {
+        status: res.status,
+        headers: { 'Content-Type': ct, 'Cache-Control': 'public, max-age=3600, s-maxage=3600' }
+      });
+    } catch {
+      return NextResponse.next();
+    }
+  }
+
+  // Blog reverse proxy
   if (!pathname.startsWith(BLOG_PATH)) return NextResponse.next();
 
   let ghostPath = pathname.slice(BLOG_PATH.length) || '/';
@@ -53,5 +86,5 @@ export async function middleware(request) {
 }
 
 export const config = {
-  matcher: '/blog-conseils-strategie-croissance(.*)'
+  matcher: ['/blog-conseils-strategie-croissance(.*)', '/sitemap.xml', '/sitemap.xml/']
 };
