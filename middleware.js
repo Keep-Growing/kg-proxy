@@ -20,7 +20,9 @@ function rewriteHtml(html) {
     .replace(/(href|src|action|content|data-src|data-href)="\/(?!\/)/g, `$1="${BLOG_PATH}/`)
     .replace(/(srcset)="\/(?!\/)/g, `$1="${BLOG_PATH}/`)
     // Replace Ghost default publication-cover.jpg with Keep Growing brand image
-    .replace(/https:\/\/static\.ghost\.org\/v\d+\.\d+\.\d+\/images\/publication-cover\.jpg/g, KG_OG_FALLBACK);
+    .replace(/https:\/\/static\.ghost\.org\/v\d+\.\d+\.\d+\/images\/publication-cover\.jpg/g, KG_OG_FALLBACK)
+    // Strip Twitter Card meta tags (Keep Growing has no Twitter; OG is used by LinkedIn/Slack/WhatsApp)
+    .replace(/\s*<meta\s+(?:name|property)="twitter:[^"]*"[^>]*\/?>\s*/gi, '');
 }
 
 function addTrailingSlashesToSitemap(xml) {
