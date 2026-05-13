@@ -9,6 +9,11 @@ const PUBLIC_BASE = `https://${PUBLIC_HOST}${BLOG_PATH}`;
 // Keep Growing brand logo for OG sharing when Ghost has no custom image
 const KG_OG_FALLBACK = 'https://static1.squarespace.com/static/671e09206ef0e92e89d66701/t/69530af543467e5d367d1359/1732363625778/logo-keepgrowing-fond-blanc.jpg?format=1500w';
 
+// Search Atlas / OTTO dynamic optimization pixel — injected into Ghost responses
+// so OTTO can apply on-page recommendations (title, meta description, keywords, canonical, schema)
+// to the proxied blog pages. Without this, OTTO sees /blog-*/ as un-instrumented.
+const OTTO_PIXEL = '<script nowprocket nitro-exclude type="text/javascript" id="sa-dynamic-optimization" data-uuid="a1e21b39-6f92-46d4-98ad-5b6be780d7c9" src="data:text/javascript;base64,dmFyIHNjcmlwdCA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoInNjcmlwdCIpO3NjcmlwdC5zZXRBdHRyaWJ1dGUoIm5vd3Byb2NrZXQiLCAiIik7c2NyaXB0LnNldEF0dHJpYnV0ZSgibml0cm8tZXhjbHVkZSIsICIiKTtzY3JpcHQuc3JjID0gImh0dHBzOi8vZGFzaGJvYXJkLnNlYXJjaGF0bGFzLmNvbS9zY3JpcHRzL2R5bmFtaWNfb3B0aW1pemF0aW9uLmpzIjtzY3JpcHQuZGF0YXNldC51dWlkID0gImExZTIxYjM5LTZmOTItNDZkNC05OGFkLTViNmJlNzgwZDdjOSI7c2NyaXB0LmlkID0gInNhLWR5bmFtaWMtb3B0aW1pemF0aW9uLWxvYWRlciI7ZG9jdW1lbnQuaGVhZC5hcHBlbmRDaGlsZChzY3JpcHQpOw=="></script>';
+
 // SEO display limits (Google SERP truncates beyond these)
 const OG_TITLE_MAX = 70;
 const OG_DESC_MAX = 160;
@@ -73,6 +78,11 @@ function rewriteHtml(html, pathname) {
   const breadcrumb = buildBreadcrumbJsonLd(pathname, out);
   if (breadcrumb) {
     out = out.replace('</head>', `${breadcrumb}\n</head>`);
+  }
+
+  // Inject OTTO pixel before </head> so Search Atlas can apply on-page recos on blog pages
+  if (!out.includes('id="sa-dynamic-optimization"')) {
+    out = out.replace('</head>', `${OTTO_PIXEL}\n</head>`);
   }
 
   return out;
