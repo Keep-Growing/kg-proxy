@@ -108,24 +108,23 @@ const INDEXNOW_KEY = '2b3c37d13ada98fe63c1cb99c4dfd1a7';
 // Typo-protection: catch malformed blog path "stratgie" (missing é) and 301 to canonical
 const BLOG_PATH_TYPO_RX = /^\/blog-conseils-stratgie-croissance(\/.*)?$/i;
 
-// Tag URL with accented characters → 301 redirect to slug-based (ASCII) canonical
-// Ghost serves both versions with HTTP 200, causing Google "duplicate canonical" errors
+// Tag/author URL normalization → 301 redirect to canonical ASCII-lowercase-hyphenated slug.
+// Fixes Google "Page avec redirection" + "Introuvable (404)" + "duplicate canonical" errors
+// for URLs like /tag/Leadership/, /tag/efficacité, /tag/diagnostic commercial, /tag/OKR.
 function normalizeTagSlug(pathname) {
-  // Match /blog-conseils-strategie-croissance/tag/<slug>/ where slug has non-ASCII chars
   const m = pathname.match(/^(\/blog-conseils-strategie-croissance\/(?:tag|author)\/)([^\/]+)(\/?$)/);
   if (!m) return null;
   const segment = decodeURIComponent(m[2]);
-  // Detect any non-ASCII character that would create encoding ambiguity
-  if (!/[^\x00-\x7F]/.test(segment)) return null;
-  // Normalize: NFD decompose + strip combining marks (é → e), then lowercase
+  // Normalize: NFD decompose + strip combining marks (é → e), lowercase, non-alphanum → hyphen
   const normalized = segment
     .normalize('NFD')
     .replace(/[̀-ͯ]/g, '')
     .toLowerCase()
     .replace(/[^a-z0-9-]+/g, '-')
     .replace(/^-+|-+$/g, '');
-  if (!normalized || normalized === segment.toLowerCase()) return null;
-  return `${m[1]}${normalized}${m[3] || '/'}`;
+  if (!normalized) return null;
+  if (normalized === segment) return null;
+  return `${m[1]}${normalized}/`;
 }
 
 export async function middleware(request) {
@@ -181,6 +180,18 @@ export async function middleware(request) {
   try {
     const res = await fetch(ghostUrl, { redirect: 'follow' });
     const ct = res.headers.get('content-type') || '';
+
+    // Convert 404 → 410 Gone for non-existent tag/author URLs.
+    // Tells Google these are permanently removed → de-index. Avoids "Introuvable (404)" pile-up.
+    if (res.status === 404 && /^\/(?:tag|author)\//.test(ghostPath)) {
+      return new NextResponse('<!doctype html><html><head><title>410 Gone</title><meta name="robots" content="noindex"></head><body><h1>410 Gone</h1><p>This page has been permanently removed.</p><p><a href="/blog-conseils-strategie-croissance/">Back to blog</a></p></body></html>', {
+        status: 410,
+        headers: {
+          'Content-Type': 'text/html; charset=utf-8',
+          'Cache-Control': 'public, max-age=86400, s-maxage=604800'
+        }
+      });
+    }
 
     if (ct.includes('text/html')) {
       const headers = {
