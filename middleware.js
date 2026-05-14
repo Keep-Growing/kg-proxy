@@ -108,6 +108,48 @@ const INDEXNOW_KEY = '2b3c37d13ada98fe63c1cb99c4dfd1a7';
 // Typo-protection: catch malformed blog path "stratgie" (missing é) and 301 to canonical
 const BLOG_PATH_TYPO_RX = /^\/blog-conseils-stratgie-croissance(\/.*)?$/i;
 
+// Legacy URL redirects — old paths from previous Squarespace/Ghost iterations that
+// Google still has indexed. Done at middleware level rather than Squarespace URL Mappings
+// because (a) blog paths bypass Squarespace, (b) Squarespace's mappings emit
+// off-domain Location headers (to bamboo-celery-eayp.squarespace.com), losing SEO juice.
+const LEGACY_REDIRECTS = {
+  // Apex / Squarespace paths
+  '/nos-solutions': '/pulse-audit-commercial/',
+  '/nos-accompagnements': '/done-with-you/',
+  '/articles-linkedin': '/articles-linkedin-dirigeant-commercial/',
+  '/rendezvous-1': '/rendezvous/',
+  '/landing-page-le-collectif-commercial': '/livre-blanc-le-collectif-commercial/',
+  '/a-propos-keepgrowing': '/a-propos-keep-growing/',
+  '/done-with-you-1': '/done-with-you/',
+  '/diagnostic-commercial': '/pulse-audit-commercial/',
+  // Old blog article slugs → canonical pages
+  '/blog-conseils-strategie-croissance/dominer-marche-strategie-commerciale-ciblee': '/blog-conseils-strategie-croissance/',
+  '/blog-conseils-strategie-croissance/collectif-commercial-attitudes-exemplaires-8a7a7': '/blog-conseils-strategie-croissance/collectif-commercial-attitudes-exemplaires/',
+  '/blog-conseils-strategie-croissance/fondamentaux-processus-commerciaux-9cyj3': '/blog-conseils-strategie-croissance/fondamentaux-processus-commerciaux/',
+  '/blog-conseils-strategie-croissance/le-sales-business-coach-un-directeur-commercial-augmente': '/blog-conseils-strategie-croissance/',
+  '/blog-conseils-strategie-croissance/back-basics': '/blog-conseils-strategie-croissance/fonction-commerciale-retour-fondamentaux/',
+  '/blog-conseils-strategie-croissance/meddic-la-cle-de-victoire-dans-les-ventes-b2b-complexes': '/livre-blanc-meddicc/',
+  '/blog-conseils-strategie-croissance/conseils-pour-un-onboarding-commercial-reussi': '/livre-blanc-lonboarding-efficace-des-commerciaux/',
+  '/blog-conseils-strategie-croissance/prise-de-fonction-en-tant-que-directeur-commercial-les-100-premiers-jours': '/les-100-premiers-jours-du-directeur-commercial/',
+  '/blog-conseils-strategie-croissance/maitriser-lart-de-la-prospection-en-b2b': '/blog-conseils-strategie-croissance/prospection-les-cles-dune-approche-gagnante/',
+  '/blog-conseils-strategie-croissance/maitriser-lart-du-pitch-trois-scenarios-pratiques': '/blog-conseils-strategie-croissance/executive-conversation-pitch-dirigeant/',
+  '/blog-conseils-strategie-croissance/assurer-le-suivi-des-clients-cles-pour-fideliser-la-relation-en-b2b': '/livre-blanc-gestion-de-grands-comptes/',
+  '/blog-conseils-strategie-croissance/pivoter-avec-precision-lart-de-la-reorientation-en-startup': '/blog-conseils-strategie-croissance/',
+  '/blog-conseils-strategie-croissance/seminaire-de-fin-dannee-loccasion-reflechir-et-dinnover': '/blog-conseils-strategie-croissance/',
+  // Old category URLs (Squarespace had categories; Ghost uses tags)
+  '/blog-conseils-strategie-croissance/category/Management-Leadership': '/blog-conseils-strategie-croissance/tag/leadership/',
+  '/blog-conseils-strategie-croissance/category/Transformation-commerciale': '/blog-conseils-strategie-croissance/tag/management-commercial/',
+};
+
+function lookupLegacyRedirect(pathname) {
+  // Try exact match (case-insensitive on the path)
+  const lower = pathname.toLowerCase();
+  // Strip trailing slash for lookup (we store keys without trailing slash)
+  const key = lower.endsWith('/') && lower.length > 1 ? lower.slice(0, -1) : lower;
+  if (LEGACY_REDIRECTS[key]) return LEGACY_REDIRECTS[key];
+  return null;
+}
+
 // Tag/author URL normalization → 301 redirect to canonical ASCII-lowercase-hyphenated slug.
 // Fixes Google "Page avec redirection" + "Introuvable (404)" + "duplicate canonical" errors
 // for URLs like /tag/Leadership/, /tag/efficacité, /tag/diagnostic commercial, /tag/OKR.
@@ -129,6 +171,13 @@ function normalizeTagSlug(pathname) {
 
 export async function middleware(request) {
   const { pathname, search } = request.nextUrl;
+
+  // Fix 0: legacy URL redirects (old Squarespace + old Ghost slugs)
+  const legacyTarget = lookupLegacyRedirect(pathname);
+  if (legacyTarget) {
+    const url = new URL(legacyTarget + search, request.url);
+    return NextResponse.redirect(url, 301);
+  }
 
   // Fix 1: typo path "stratgie" (missing é) → 301 to canonical "strategie"
   if (BLOG_PATH_TYPO_RX.test(pathname)) {
@@ -228,6 +277,23 @@ export const config = {
     '/sitemap.xml',
     '/sitemap.xml/',
     '/2b3c37d13ada98fe63c1cb99c4dfd1a7.txt',
-    '/2b3c37d13ada98fe63c1cb99c4dfd1a7.txt/'
+    '/2b3c37d13ada98fe63c1cb99c4dfd1a7.txt/',
+    // Legacy URLs — caught by lookupLegacyRedirect()
+    '/nos-solutions',
+    '/nos-solutions/',
+    '/nos-accompagnements',
+    '/nos-accompagnements/',
+    '/articles-linkedin',
+    '/articles-linkedin/',
+    '/rendezvous-1',
+    '/rendezvous-1/',
+    '/landing-page-le-collectif-commercial',
+    '/landing-page-le-collectif-commercial/',
+    '/a-propos-keepgrowing',
+    '/a-propos-keepgrowing/',
+    '/done-with-you-1',
+    '/done-with-you-1/',
+    '/diagnostic-commercial',
+    '/diagnostic-commercial/',
   ]
 };
