@@ -105,8 +105,45 @@ function addTrailingSlashesToSitemap(xml) {
 
 const INDEXNOW_KEY = '2b3c37d13ada98fe63c1cb99c4dfd1a7';
 
+// Typo-protection: catch malformed blog path "stratgie" (missing é) and 301 to canonical
+const BLOG_PATH_TYPO_RX = /^\/blog-conseils-stratgie-croissance(\/.*)?$/i;
+
+// Tag URL with accented characters → 301 redirect to slug-based (ASCII) canonical
+// Ghost serves both versions with HTTP 200, causing Google "duplicate canonical" errors
+function normalizeTagSlug(pathname) {
+  // Match /blog-conseils-strategie-croissance/tag/<slug>/ where slug has non-ASCII chars
+  const m = pathname.match(/^(\/blog-conseils-strategie-croissance\/(?:tag|author)\/)([^\/]+)(\/?$)/);
+  if (!m) return null;
+  const segment = decodeURIComponent(m[2]);
+  // Detect any non-ASCII character that would create encoding ambiguity
+  if (!/[^\x00-\x7F]/.test(segment)) return null;
+  // Normalize: NFD decompose + strip combining marks (é → e), then lowercase
+  const normalized = segment
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  if (!normalized || normalized === segment.toLowerCase()) return null;
+  return `${m[1]}${normalized}${m[3] || '/'}`;
+}
+
 export async function middleware(request) {
   const { pathname, search } = request.nextUrl;
+
+  // Fix 1: typo path "stratgie" (missing é) → 301 to canonical "strategie"
+  if (BLOG_PATH_TYPO_RX.test(pathname)) {
+    const fixed = pathname.replace(/blog-conseils-stratgie-croissance/i, 'blog-conseils-strategie-croissance');
+    const url = new URL(fixed + search, request.url);
+    return NextResponse.redirect(url, 301);
+  }
+
+  // Fix 2: tag/author URLs with accented chars → 301 to ASCII slug
+  const normalizedTag = normalizeTagSlug(pathname);
+  if (normalizedTag) {
+    const url = new URL(normalizedTag + search, request.url);
+    return NextResponse.redirect(url, 301);
+  }
 
   // IndexNow key file at site root — required to authenticate IndexNow submissions
   if (pathname === `/${INDEXNOW_KEY}.txt` || pathname === `/${INDEXNOW_KEY}.txt/`) {
@@ -176,6 +213,7 @@ export async function middleware(request) {
 export const config = {
   matcher: [
     '/blog-conseils-strategie-croissance(.*)',
+    '/blog-conseils-stratgie-croissance(.*)',
     '/sitemap.xml',
     '/sitemap.xml/',
     '/2b3c37d13ada98fe63c1cb99c4dfd1a7.txt',
