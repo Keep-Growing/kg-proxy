@@ -93,10 +93,18 @@ function addTrailingSlashesToSitemap(xml) {
     try {
       const u = new URL(url);
       if (u.hostname !== PUBLIC_HOST) return match;
-      if (u.pathname === '/' || u.pathname.endsWith('/')) return match;
       if (/\.[a-z0-9]{1,5}$/i.test(u.pathname)) return match;
-      u.pathname += '/';
-      return `<loc>${u.toString()}</loc>`;
+      // Ghost (blog) canonical includes trailing slash → align sitemap with slash
+      if (u.pathname.startsWith(BLOG_PATH + '/') && !u.pathname.endsWith('/')) {
+        u.pathname += '/';
+        return `<loc>${u.toString()}</loc>`;
+      }
+      // Squarespace (apex) canonical excludes trailing slash → align sitemap without slash
+      if (!u.pathname.startsWith(BLOG_PATH) && u.pathname !== '/' && u.pathname.endsWith('/')) {
+        u.pathname = u.pathname.replace(/\/$/, '');
+        return `<loc>${u.toString()}</loc>`;
+      }
+      return match;
     } catch {
       return match;
     }
