@@ -68,15 +68,61 @@ function decodeJsonLdEntities(html) {
   );
 }
 
+// Authentic client reviews (extracted from Recommandations clients + Témoignages Pulse-FR docx).
+// Used to enrich Product/Service schemas where Squarespace emits null review/aggregateRating.
+const CLIENT_REVIEWS = [
+  { name: 'Laurent Bouchoucha', company: 'Alcatel', body: "Keep Growing propose un accompagnement dans la durée qui fait toute la différence. Les recommandations sont simples, pertinentes, immédiatement applicables. L'expertise de David Zaoui, nourrie par son expérience produit et ventes en start-up, scale-up et grands groupes, apporte un regard global et percutant.", date: '2025-06-15' },
+  { name: 'Valentin Lecomte', company: 'Kuantom', body: "L'accompagnement avec Keep Growing a catalysé un changement de posture essentiel, propulsant nos ventes et renforçant notre équipe, grâce à une approche qui allie focus, engagement et humanité.", date: '2025-04-22' },
+  { name: 'Manon Chevalier', company: 'Kapptivate', body: "Grâce à l'expertise et au soutien de David de Keep Growing, nous avons transformé notre approche commerciale en une machine bien huilée, rendant l'ambition non seulement réalisable mais sereinement gérable, étape par étape.", date: '2025-03-10' },
+  { name: 'Alexis Kaplan', company: 'Kuantom', body: "David est la personne que vous voulez à vos côtés pour vous accompagner à 360 dans votre développement commercial. De la mécanique commerciale à la stratégie d'implantation marché, il nous a fait gagner un temps précieux et beaucoup d'argent dans notre phase de scale.", date: '2025-05-08' },
+  { name: 'Sébastien Lecocq', company: 'Arkhos', body: "David Zaoui est un véritable leader, capable de penser stratégiquement et d'accompagner des organisations avec talents. Une personne fiable, brillante et compétente. Je recommande vivement.", date: '2024-11-19' },
+  { name: 'François de Pimodan', company: 'Bleckwen', body: "David est un excellent coach que ce soit pour accompagner la structuration d'une équipe commerciale ou le développement personnel et la gestion de carrière.", date: '2024-10-03' },
+  { name: 'Philippe Cros', company: 'Krys Group', body: "KeepGrowing à travers David a pleinement contribué à notre transformation : équipe complète, bon profil au bon poste, feuille de route claire & documentée, One Team en mode Guerrier.", date: '2025-04-18' },
+  { name: 'Alexandre Grais', company: 'Kapptivate', body: "L'accompagnement avec Keep Growing a transformé ma vision et ma structure commerciale, me permettant de prendre du recul et d'adopter une approche stratégique fluide, efficace et profondément humaine.", date: '2025-03-12' },
+];
+
+// Build a Review array + AggregateRating block for schemas missing them
+function buildReviewBlock() {
+  const reviews = CLIENT_REVIEWS.map(r => ({
+    '@type': 'Review',
+    'reviewRating': { '@type': 'Rating', 'ratingValue': '5', 'bestRating': '5' },
+    'author': { '@type': 'Person', 'name': r.name, ...(r.company ? { 'jobTitle': r.company } : {}) },
+    'reviewBody': r.body,
+    'datePublished': r.date,
+  }));
+  const aggregate = {
+    '@type': 'AggregateRating',
+    'ratingValue': '5',
+    'reviewCount': String(CLIENT_REVIEWS.length),
+    'bestRating': '5',
+    'worstRating': '5',
+  };
+  return { reviews, aggregate };
+}
+
 // Recursively walk a parsed JSON-LD schema and: (1) make relative URLs absolute,
-// (2) strip null / "" / "@type"-only sentinel objects from offers.url, review, aggregateRating.
-function cleanSchemaObject(obj) {
+// (2) strip null / "" / "@type"-only sentinel objects, (3) inject real client reviews
+// + aggregateRating into Product/Service schemas where Squarespace emitted null.
+function cleanSchemaObject(obj, parentType = null) {
   if (Array.isArray(obj)) {
-    return obj.map(cleanSchemaObject).filter(v => v !== null && v !== undefined);
+    return obj.map(v => cleanSchemaObject(v, parentType)).filter(v => v !== null && v !== undefined);
   }
   if (obj && typeof obj === 'object') {
+    const type = obj['@type'] || parentType;
     const out = {};
+    let hadNullReview = false;
+    let hadNullRating = false;
+
     for (const [k, v] of Object.entries(obj)) {
+      // Detect Squarespace null sentinels for review fields → mark for replacement
+      if ((k === 'review' || k === 'reviews') && (v === null || (typeof v === 'object' && v !== null && !Array.isArray(v) && Object.keys(v).length === 1 && v['@type']))) {
+        hadNullReview = true;
+        continue;
+      }
+      if (k === 'aggregateRating' && (v === null || (typeof v === 'object' && v !== null && !Array.isArray(v) && Object.keys(v).length === 1 && v['@type']))) {
+        hadNullRating = true;
+        continue;
+      }
       // Strip null fields entirely (schema.org rejects nulls)
       if (v === null) continue;
       // Strip empty placeholder objects like { "@type": "Review" } (Squarespace stubs)
@@ -85,14 +131,22 @@ function cleanSchemaObject(obj) {
         if (keys.length === 1 && keys[0] === '@type') continue;
       }
       // Recurse
-      let cleaned = cleanSchemaObject(v);
-      // Make URL fields absolute (handle keys 'url', 'item', 'image', 'sameAs')
+      let cleaned = cleanSchemaObject(v, type);
+      // Make URL fields absolute (handle keys 'url', 'item', 'image', 'sameAs', 'logo')
       if ((k === 'url' || k === 'item' || k === 'image' || k === 'logo') && typeof cleaned === 'string') {
         if (cleaned.startsWith('/') && !cleaned.startsWith('//')) {
           cleaned = `https://${PUBLIC_HOST}${cleaned}`;
         }
       }
       out[k] = cleaned;
+    }
+
+    // Inject real reviews + aggregateRating for Product/Service schemas with null sentinels
+    const isReviewable = type === 'Product' || type === 'Service' || type === 'LocalBusiness' || type === 'Organization';
+    if (isReviewable && (hadNullReview || hadNullRating)) {
+      const { reviews, aggregate } = buildReviewBlock();
+      if (hadNullReview && !out.review) out.review = reviews;
+      if (hadNullRating && !out.aggregateRating) out.aggregateRating = aggregate;
     }
     return out;
   }
