@@ -143,21 +143,29 @@ function cleanSchemaObject(obj, parentType = null) {
       out[k] = cleaned;
     }
 
-    // Inject real reviews + aggregateRating for Product/Service schemas where
-    // (a) Squarespace emitted null sentinels OR
-    // (b) aggregateRating.reviewCount > listed reviews length OR
-    // (c) Schema has aggregateRating but no review array.
+    // Inject real reviews + aggregateRating for Product/Service schemas where:
+    // (a) Squarespace emitted null sentinels (review: null, aggregateRating: null)
+    // (b) Schema has offers but NO review field at all (Squarespace removed even the nulls)
+    // (c) aggregateRating.reviewCount > listed reviews.length (mismatch)
     const isReviewable = type === 'Product' || type === 'Service' || type === 'LocalBusiness';
     if (isReviewable) {
       const { reviews, aggregate } = buildReviewBlock();
+      // Marker that this is a real commercial offering: has offers OR price OR brand
+      const isCommercialOffering = ('offers' in out) || ('price' in out) || ('brand' in out);
+
+      // Case (a): had null sentinel
       if (hadNullReview && !out.review) out.review = reviews;
       if (hadNullRating && !out.aggregateRating) out.aggregateRating = aggregate;
-      // Case (b): mismatch between aggregateRating.reviewCount and review[].length
+
+      // Case (b): no review field at all but commercial product
+      if (isCommercialOffering && !out.review) out.review = reviews;
+      if (isCommercialOffering && !out.aggregateRating) out.aggregateRating = aggregate;
+
+      // Case (c): mismatch reviewCount vs review[].length
       if (out.aggregateRating && typeof out.aggregateRating === 'object') {
         const stated = parseInt(out.aggregateRating.reviewCount || '0', 10);
         const existing = Array.isArray(out.review) ? out.review : (out.review ? [out.review] : []);
         if (stated > existing.length && existing.length < reviews.length) {
-          // Top up with reviews not already present (by author name)
           const existingNames = new Set(existing.map(r => (r.author && r.author.name) || ''));
           const filler = reviews.filter(r => !existingNames.has(r.author.name)).slice(0, stated - existing.length);
           out.review = [...existing, ...filler];
