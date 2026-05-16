@@ -29,6 +29,34 @@ function rewriteBody(text) {
     .replace(/blog-conseils-strategie-croissance\.ghost\.io/g, `${PUBLIC_HOST}${BLOG_PATH}`);
 }
 
+// Decode HTML entities INSIDE JSON-LD <script> blocks. Ghost emits string values
+// like "d&#x27;une" inside Article schema — Schema.org validators flag these as
+// invalid format. We decode entities but leave structural JSON characters (",\,/)
+// alone so the JSON itself remains parseable.
+function decodeJsonLdEntities(html) {
+  return html.replace(
+    /(<script[^>]*type="application\/ld\+json"[^>]*>)([\s\S]*?)(<\/script>)/gi,
+    (match, openTag, json, closeTag) => {
+      const decoded = json
+        .replace(/&amp;/g, '&')
+        .replace(/&#x27;/g, "'")
+        .replace(/&#39;/g, "'")
+        .replace(/&apos;/g, "'")
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&nbsp;/g, ' ')
+        .replace(/&#x2013;/gi, '–')
+        .replace(/&#x2014;/gi, '—')
+        .replace(/&#x2026;/gi, '…')
+        .replace(/&#xa0;/gi, ' ')
+        .replace(/&#160;/g, ' ')
+        // Trim leading/trailing whitespace inside string values (Ghost adds newlines around values)
+        .replace(/"\s*\n\s*([^"]+?)\s*\n\s*"/g, (m, v) => `"${v.replace(/\s+/g, ' ').trim()}"`);
+      return `${openTag}${decoded}${closeTag}`;
+    }
+  );
+}
+
 function truncateMeta(html) {
   return html
     .replace(/(<meta\s+property="og:title"\s+content=")([^"]+)(")/gi, (m, p, content, s) =>
@@ -74,6 +102,10 @@ function rewriteHtml(html, pathname) {
     .replace(/\s*<meta\s+(?:name|property)="twitter:[^"]*"[^>]*\/?>\s*/gi, '');
 
   out = truncateMeta(out);
+
+  // Decode HTML entities inside JSON-LD blocks — Schema.org validators reject
+  // values like "d&#x27;une approche" (Ghost's emit format).
+  out = decodeJsonLdEntities(out);
 
   const breadcrumb = buildBreadcrumbJsonLd(pathname, out);
   if (breadcrumb) {
