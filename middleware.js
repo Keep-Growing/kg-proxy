@@ -29,15 +29,16 @@ function rewriteBody(text) {
     .replace(/blog-conseils-strategie-croissance\.ghost\.io/g, `${PUBLIC_HOST}${BLOG_PATH}`);
 }
 
-// Decode HTML entities INSIDE JSON-LD <script> blocks. Ghost emits string values
-// like "d&#x27;une" inside Article schema — Schema.org validators flag these as
-// invalid format. We decode entities but leave structural JSON characters (",\,/)
-// alone so the JSON itself remains parseable.
+// Decode HTML entities INSIDE JSON-LD <script> blocks + clean schema bugs:
+// - Ghost emits "d&#x27;une" inside Article schema → decode entities
+// - Squarespace emits Product schema with relative URLs "/contact" → make absolute
+// - Squarespace emits "review": null / "aggregateRating": null → strip nulls
+// - Trim whitespace/newlines around string values (Squarespace + Ghost both add them)
 function decodeJsonLdEntities(html) {
   return html.replace(
     /(<script[^>]*type="application\/ld\+json"[^>]*>)([\s\S]*?)(<\/script>)/gi,
     (match, openTag, json, closeTag) => {
-      const decoded = json
+      let decoded = json
         .replace(/&amp;/g, '&')
         .replace(/&#x27;/g, "'")
         .replace(/&#39;/g, "'")
@@ -50,11 +51,52 @@ function decodeJsonLdEntities(html) {
         .replace(/&#x2026;/gi, '…')
         .replace(/&#xa0;/gi, ' ')
         .replace(/&#160;/g, ' ')
-        // Trim leading/trailing whitespace inside string values (Ghost adds newlines around values)
+        // Trim leading/trailing whitespace inside string values
         .replace(/"\s*\n\s*([^"]+?)\s*\n\s*"/g, (m, v) => `"${v.replace(/\s+/g, ' ').trim()}"`);
+
+      // Attempt JSON parse + structural cleanup (relative URL + null fields)
+      try {
+        const parsed = JSON.parse(decoded);
+        const cleaned = cleanSchemaObject(parsed);
+        decoded = JSON.stringify(cleaned);
+      } catch {
+        // If parse fails (e.g. multiple objects on one line, malformed), return decoded-only
+      }
+
       return `${openTag}${decoded}${closeTag}`;
     }
   );
+}
+
+// Recursively walk a parsed JSON-LD schema and: (1) make relative URLs absolute,
+// (2) strip null / "" / "@type"-only sentinel objects from offers.url, review, aggregateRating.
+function cleanSchemaObject(obj) {
+  if (Array.isArray(obj)) {
+    return obj.map(cleanSchemaObject).filter(v => v !== null && v !== undefined);
+  }
+  if (obj && typeof obj === 'object') {
+    const out = {};
+    for (const [k, v] of Object.entries(obj)) {
+      // Strip null fields entirely (schema.org rejects nulls)
+      if (v === null) continue;
+      // Strip empty placeholder objects like { "@type": "Review" } (Squarespace stubs)
+      if (v && typeof v === 'object' && !Array.isArray(v)) {
+        const keys = Object.keys(v);
+        if (keys.length === 1 && keys[0] === '@type') continue;
+      }
+      // Recurse
+      let cleaned = cleanSchemaObject(v);
+      // Make URL fields absolute (handle keys 'url', 'item', 'image', 'sameAs')
+      if ((k === 'url' || k === 'item' || k === 'image' || k === 'logo') && typeof cleaned === 'string') {
+        if (cleaned.startsWith('/') && !cleaned.startsWith('//')) {
+          cleaned = `https://${PUBLIC_HOST}${cleaned}`;
+        }
+      }
+      out[k] = cleaned;
+    }
+    return out;
+  }
+  return obj;
 }
 
 function truncateMeta(html) {
@@ -70,6 +112,24 @@ function truncateMeta(html) {
     );
 }
 
+// Decode HTML entities found in scraped HTML text (used for breadcrumb name)
+function decodeHtmlEntities(s) {
+  return s
+    .replace(/&amp;/g, '&')
+    .replace(/&#x27;/g, "'")
+    .replace(/&#39;/g, "'")
+    .replace(/&apos;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&#x2013;/gi, '–')
+    .replace(/&#x2014;/gi, '—')
+    .replace(/&#x2026;/gi, '…')
+    .replace(/&#xa0;/gi, ' ')
+    .replace(/&#160;/g, ' ');
+}
+
 function buildBreadcrumbJsonLd(pathname, html) {
   // Detect article URL: /blog-.../single-segment/ (with optional trailing slash already there)
   const articleMatch = pathname.match(/^\/blog-conseils-strategie-croissance\/([^/]+)\/?$/);
@@ -77,9 +137,10 @@ function buildBreadcrumbJsonLd(pathname, html) {
   const slug = articleMatch[1];
   // Skip Ghost system paths
   if (['tag', 'author', 'page', 'rss', 'sitemap.xml', 'sitemap-posts.xml', 'sitemap-pages.xml', 'sitemap-authors.xml', 'sitemap-tags.xml', 'robots.txt'].includes(slug)) return null;
-  // Extract article H1 as breadcrumb leaf
+  // Extract article H1 as breadcrumb leaf, decode entities (e.g. d&#x27;une → d'une)
   const h1Match = html.match(/<h1[^>]*class="gh-article-title[^"]*"[^>]*>([^<]+)<\/h1>/);
-  const articleTitle = h1Match ? h1Match[1].trim() : slug.replace(/-/g, ' ');
+  const rawTitle = h1Match ? h1Match[1].trim() : slug.replace(/-/g, ' ');
+  const articleTitle = decodeHtmlEntities(rawTitle);
   const breadcrumb = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -259,6 +320,45 @@ export async function middleware(request) {
     }
   }
 
+  // Apex (Squarespace) schema cleanup proxy — only for pages with known schema issues.
+  // Catches Product/Service schemas with relative URLs + null fields emitted by Squarespace.
+  const APEX_SCHEMA_PAGES = new Set([
+    '/pulse-audit-commercial/', '/pulse-fonds/', '/teach-you/',
+    '/done-with-you/', '/done-for-you/', '/due-diligence-commerciale/',
+    '/livre-blanc-le-collectif-commercial/', '/livre-blanc-meddicc/',
+    '/livre-blanc-reseau-de-partenaires/', '/livre-blanc-introduction-aux-okr/',
+    '/livre-blanc-lonboarding-efficace-des-commerciaux/',
+    '/livre-blanc-gestion-de-grands-comptes/', '/livre-blanc-booster-votre-business/',
+    '/lb-pilotez-la-performance-kpi/', '/lintelligence-artificielle-vente-b2b/',
+    '/les-12-profils-relationnels-en-vente/', '/le-dirigeant-de-startup-dcrypt/',
+    '/les-profils-commerciaux-dcrypts/', '/recruter-le-bon-commercial-en-2026/',
+    '/les-100-premiers-jours-du-directeur-commercial/',
+    '/contact-vision/', '/contact-culture/',
+    '/atelier-disc-leadership/', '/atelier-disc-devenez-influent/',
+    '/atelier-vision-strategie/', '/atelier-culture-adn/',
+    '/merci-rdv/', '/a-propos-keep-growing/',
+  ]);
+  if (APEX_SCHEMA_PAGES.has(pathname)) {
+    try {
+      const res = await fetch(`https://${SQUARESPACE_HOST}${pathname}${search}`, { redirect: 'follow' });
+      const ct = res.headers.get('content-type') || '';
+      if (ct.includes('text/html')) {
+        let html = await res.text();
+        // Apply schema cleanup (decode entities, absolute URLs, strip nulls)
+        html = decodeJsonLdEntities(html);
+        return new NextResponse(html, {
+          status: res.status,
+          headers: {
+            'Content-Type': 'text/html; charset=utf-8',
+            'Cache-Control': 'public, max-age=0, must-revalidate, s-maxage=300, stale-while-revalidate=600',
+          }
+        });
+      }
+    } catch {
+      return NextResponse.next();
+    }
+  }
+
   // Blog reverse proxy
   if (!pathname.startsWith(BLOG_PATH)) return NextResponse.next();
 
@@ -335,5 +435,34 @@ export const config = {
     '/done-with-you-1/',
     '/diagnostic-commercial',
     '/diagnostic-commercial/',
+    // Apex pages with Squarespace schema cleanup needed (cf. APEX_SCHEMA_PAGES)
+    '/pulse-audit-commercial/',
+    '/pulse-fonds/',
+    '/teach-you/',
+    '/done-with-you/',
+    '/done-for-you/',
+    '/due-diligence-commerciale/',
+    '/livre-blanc-le-collectif-commercial/',
+    '/livre-blanc-meddicc/',
+    '/livre-blanc-reseau-de-partenaires/',
+    '/livre-blanc-introduction-aux-okr/',
+    '/livre-blanc-lonboarding-efficace-des-commerciaux/',
+    '/livre-blanc-gestion-de-grands-comptes/',
+    '/livre-blanc-booster-votre-business/',
+    '/lb-pilotez-la-performance-kpi/',
+    '/lintelligence-artificielle-vente-b2b/',
+    '/les-12-profils-relationnels-en-vente/',
+    '/le-dirigeant-de-startup-dcrypt/',
+    '/les-profils-commerciaux-dcrypts/',
+    '/recruter-le-bon-commercial-en-2026/',
+    '/les-100-premiers-jours-du-directeur-commercial/',
+    '/contact-vision/',
+    '/contact-culture/',
+    '/atelier-disc-leadership/',
+    '/atelier-disc-devenez-influent/',
+    '/atelier-vision-strategie/',
+    '/atelier-culture-adn/',
+    '/merci-rdv/',
+    '/a-propos-keep-growing/',
   ]
 };
