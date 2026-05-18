@@ -167,6 +167,12 @@ function cleanSchemaObject(obj, parentType = null) {
       out[k] = cleaned;
     }
 
+    // Normalize @context to https — Squarespace WebSite schema emits
+    // "http://schema.org" which fails Google's modern Rich Results validator.
+    if (out['@context'] === 'http://schema.org') {
+      out['@context'] = 'https://schema.org';
+    }
+
     // Overwrite stale NAP on Organization/LocalBusiness — Squarespace business
     // profile still emits the old office address. Strip telephone entirely:
     // David's GBP number is a personal mobile that must not appear publicly.
