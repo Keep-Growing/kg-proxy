@@ -125,6 +125,216 @@ const CORRECT_ADDRESS = {
   'addressCountry': 'FR',
 };
 
+// =====================================================================
+// LLM Visibility Phase 1 — FAQPage JSON-LD for top 3 service pages.
+// ChatGPT, Gemini and Perplexity extract FAQPage schemas natively as
+// citable Q&A blocks. Content sourced from /frequent-asked-questions/
+// and the live page copy — every answer is grounded in the actual
+// Keep Growing offering (no invented facts).
+// =====================================================================
+
+const FAQ_PULSE_AUDIT = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  'mainEntity': [
+    {
+      '@type': 'Question',
+      'name': "Qu'est-ce que Pulse 360° exactement ?",
+      'acceptedAnswer': {
+        '@type': 'Answer',
+        'text': "Pulse 360° est un diagnostic commercial complet qui analyse votre organisation selon 4 dimensions (vision, talents, process, environnement). Contrairement à un audit classique qui prend 3 mois, Pulse délivre un diagnostic actionnable en 4 semaines, avec un séminaire d'alignement inclus.",
+      },
+    },
+    {
+      '@type': 'Question',
+      'name': 'Combien de temps dure un diagnostic Pulse ?',
+      'acceptedAnswer': {
+        '@type': 'Answer',
+        'text': "4 semaines pour les équipes jusqu'à 50 commerciaux. 4 à 6 semaines pour les ETI multi-sites. La charge est limitée pour vos équipes : questionnaire de 15-20 min en autonomie, entretiens de 45-60 min pour les personnes sélectionnées, 2h de cadrage + ½ journée de séminaire pour la Direction.",
+      },
+    },
+    {
+      '@type': 'Question',
+      'name': 'Que révèle Pulse que je ne vois pas déjà ?',
+      'acceptedAnswer': {
+        '@type': 'Answer',
+        'text': "Vous voyez les symptômes : pipeline faible, turnover, objectifs non atteints. Pulse révèle les causes profondes. Exemple client : « L'audit financier était propre. Pulse a révélé qu'un seul commercial détenait 30% du CA dans sa tête. On a ajusté l'opération. »",
+      },
+    },
+    {
+      '@type': 'Question',
+      'name': "Que signifie « Powered by AI. Trained by Pros. » ?",
+      'acceptedAnswer': {
+        '@type': 'Answer',
+        'text': "L'IA analyse données CRM, taux de conversion, performance par commercial, questionnaires anonymes (120 questions) et signaux faibles. Les experts traduisent ces analyses via 8 à 20 entretiens croisés, un diagnostic contextualisé, des quick wins chiffrés, un séminaire d'alignement et un plan 30-60-90 jours.",
+      },
+    },
+    {
+      '@type': 'Question',
+      'name': 'Quelles sont les différentes offres Pulse ?',
+      'acceptedAnswer': {
+        '@type': 'Answer',
+        'text': "Pulse Express — Gratuit, pour équipes ≤10 (questionnaire IA, score instantané, benchmark, debrief 1h). Pulse Startup/PME — À partir de 12K€, équipes 10+, diagnostic complet 4 semaines, 8 entretiens, 3 quick wins, séminaire ½ journée, roadmap 12 mois. Pulse ETI/Multi-pays — À partir de 25K€, multi-sites, 12-20 entretiens, benchmark inter-sites, séminaire CODIR, roadmap 18 mois. Pulse for PE — Sur mesure pour fonds, 4 modules (pré-acquisition, post-closing, turnaround, exit).",
+      },
+    },
+    {
+      '@type': 'Question',
+      'name': 'Les réponses individuelles sont-elles vraiment anonymes ?',
+      'acceptedAnswer': {
+        '@type': 'Answer',
+        'text': "Absolument. Le dirigeant reçoit score global, scores par dimension et équipe, écarts de perception, verbatims anonymisés et recommandations. En aucun cas il n'a accès aux réponses nominatives. Règle non négociable, contractuellement garantie. Hébergement Europe (RGPD), NDA systématique, suppression des données brutes après livraison.",
+      },
+    },
+    {
+      '@type': 'Question',
+      'name': 'Faut-il continuer avec Keep Growing après le diagnostic ?',
+      'acceptedAnswer': {
+        '@type': 'Answer',
+        'text': "Non. Le diagnostic est conçu pour être autonome et actionnable. 60% de nos clients choisissent un accompagnement post-diagnostic (Teach You, Done With You, Done For You) — mais c'est leur choix. Notre métier est de révéler le potentiel ; la transformation vous appartient.",
+      },
+    },
+  ],
+};
+
+const FAQ_TEACH_YOU = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  'mainEntity': [
+    {
+      '@type': 'Question',
+      'name': "Qu'est-ce que Teach You ?",
+      'acceptedAnswer': {
+        '@type': 'Answer',
+        'text': "Teach You est l'offre formation de Keep Growing : des programmes concrets de montée en compétences commerciales, animés par d'anciens dirigeants commerciaux. Couvre la vente & négociation, le management & leadership, le développement commercial et le marketing. Organisme de formation certifié Qualiopi, financement OPCO possible.",
+      },
+    },
+    {
+      '@type': 'Question',
+      'name': 'Keep Growing est-il certifié Qualiopi ?',
+      'acceptedAnswer': {
+        '@type': 'Answer',
+        'text': "Oui. Keep Growing est un organisme de formation certifié Qualiopi, garantissant des standards d'excellence et la prise en charge des formations par les OPCO. Cette certification couvre l'ensemble de nos programmes Teach You ainsi que nos bilans de compétences.",
+      },
+    },
+    {
+      '@type': 'Question',
+      'name': 'Quelles formations proposez-vous ?',
+      'acceptedAnswer': {
+        '@type': 'Answer',
+        'text': "4 grandes catégories. Vente & négociation : L'art de la vente métier (3 jours, à partir de 1 800 € HT), prospection B2B (5 jours, 3 000 € HT), négociation commerciale, ventes complexes, posture commerciale, IA dans la vente. Management & leadership : Management & Leadership commercial (2-4 jours + ancrage, 1 200 € HT), DISC influence, posture du mentor. Développement commercial : Réseau de partenaires (2-4 jours, 1 500 € HT), assurance & posture. Marketing : Growth Marketing experts comptables, marque personnelle.",
+      },
+    },
+    {
+      '@type': 'Question',
+      'name': 'Proposez-vous des bilans de compétences ?',
+      'acceptedAnswer': {
+        '@type': 'Answer',
+        'text': "Oui. Notre bilan de compétences vous aide à retrouver de la clarté, du sens et une trajectoire alignée avec votre potentiel. Il est éligible au CPF et à la prise en charge OPCO, et est délivré dans le cadre de notre certification Qualiopi.",
+      },
+    },
+    {
+      '@type': 'Question',
+      'name': 'Quels sont les délais d\'accès aux formations ?',
+      'acceptedAnswer': {
+        '@type': 'Answer',
+        'text': "Délai moyen d'accès : 10 jours ouvrés après validation. Le parcours type : entretien gratuit de 45 min pour formuler le besoin, envoi du programme détaillé avec objectifs et devis, auto-positionnement ou test pour ajuster les contenus, puis signature de la convention de formation et règlement intérieur.",
+      },
+    },
+    {
+      '@type': 'Question',
+      'name': 'Les formations sont-elles accessibles aux personnes en situation de handicap ?',
+      'acceptedAnswer': {
+        '@type': 'Answer',
+        'text': "Oui. Nos accompagnements sont accessibles aux personnes en situation de handicap. Étude des besoins en amont avec notre référent handicap, mobilisation de ressources compétentes ou orientation vers des partenaires spécialisés (AGEFIPH, FIPHFP, CAP EMPLOI, MDPH). Contact : hello@keepgrowing.fr.",
+      },
+    },
+    {
+      '@type': 'Question',
+      'name': 'Quels sont vos indicateurs de qualité ?',
+      'acceptedAnswer': {
+        '@type': 'Answer',
+        'text': "Sur les 12 derniers mois, nous avons délivré 1 246 heures de formation. Nos notes moyennes apprenants : 18.33/20 sur la satisfaction globale, 18.41/20 sur la qualité pédagogique, 19.34/20 sur la recommandation. Animation assurée par des professionnels actifs apportant une vision terrain.",
+      },
+    },
+  ],
+};
+
+const FAQ_DONE_WITH_YOU = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  'mainEntity': [
+    {
+      '@type': 'Question',
+      'name': "Qu'est-ce que l'offre Done With You ?",
+      'acceptedAnswer': {
+        '@type': 'Answer',
+        'text': "Done With You, c'est un Business Partner et sparring partner en mentoring commercial — opérationnel, pas théorique. Un ancien CEO/CSO à vos côtés pour révéler le potentiel de votre organisation commerciale, sur la durée. L'accompagnement s'appuie sur le diagnostic Pulse pour identifier précisément les priorités à adresser.",
+      },
+    },
+    {
+      '@type': 'Question',
+      'name': 'Comment se déroule un accompagnement Done With You ?',
+      'acceptedAnswer': {
+        '@type': 'Answer',
+        'text': "On part du diagnostic Pulse pour identifier les priorités et construire le plan d'action. Définition conjointe des objectifs, KPIs, fréquence des sessions et durée d'engagement. Sessions de mentoring régulières (6 à 7h/mois) avec votre Business Partner dédié. Revue des KPIs, ajustement du plan, hotline email & téléphone disponible entre les sessions.",
+      },
+    },
+    {
+      '@type': 'Question',
+      'name': 'Quels sont les domaines couverts par le mentoring ?',
+      'acceptedAnswer': {
+        '@type': 'Answer',
+        'text': "Tous les leviers commerciaux : organisation, recrutement, onboarding, montée en compétences ; qualification, closing, négociation, CRM et outils ; management commercial, mentoring managers, rituels de pilotage ; budget, forecasting, QBR, reporting au CODIR ; changement de modèle, restructuration, croissance externe ; dashboards, indicateurs de performance, optimisation continue.",
+      },
+    },
+    {
+      '@type': 'Question',
+      'name': 'Quelles sont les formules et tarifs ?',
+      'acceptedAnswer': {
+        '@type': 'Answer',
+        'text': "Mentoring : 2 sessions de 2h-2h30 / mois en présentiel ou visio, point intermédiaire, analyse psychométrique des talents, accompagnement réunions commerciales, hotline email & téléphone, engagement 6 mois minimum, 2 500€ / mois HT. Mentoring Premium : accompagnement renforcé avec séminaires d'équipe inclus, idéal pour les transformations structurantes.",
+      },
+    },
+    {
+      '@type': 'Question',
+      'name': 'Pour qui est conçu Done With You ?',
+      'acceptedAnswer': {
+        '@type': 'Answer',
+        'text': "Les CEO, DG et Directeurs Commerciaux qui veulent structurer leur croissance sans casser ce qui fonctionne, réussir leur prise de poste et asseoir leur crédibilité, piloter une transformation commerciale complexe, ou accompagner leurs participations dans leur croissance (fonds d'investissement).",
+      },
+    },
+    {
+      '@type': 'Question',
+      'name': 'Qui sont les Business Partners de Keep Growing ?',
+      'acceptedAnswer': {
+        '@type': 'Answer',
+        'text': "Anciens dirigeants commerciaux avec +20 ans d'expérience moyenne. Ils ont tous managé avant de conseiller. Profils variés : 20+ ans EMEA en business strategy et partenariats structurants ; performance commerciale terrain en environnements internationaux ; distribution multicanale, business plans, P&L international ; productivité sales, KPIs & rituels, playbook ; santé, distribution, transformation digitale ; data-driven, environnements complexes.",
+      },
+    },
+    {
+      '@type': 'Question',
+      'name': 'Quels résultats peut-on attendre ?',
+      'acceptedAnswer': {
+        '@type': 'Answer',
+        'text': "+17 points d'engagement équipe en moyenne sur les missions documentées. Cas client Alcatel (Philippe Cros) : « 2024 : on fait le chiffre, mais dans la douleur. Équipe absente, déstructurée. 2025 : bon 1er trimestre, équipe complète, le bon profil au bon poste, One Team en mode Guerrier. » Cas client Kapptivate : transformation de la vision et de la structure commerciale, approche stratégique fluide et humaine.",
+      },
+    },
+  ],
+};
+
+// Map pathname → FAQ schema for the LLM Visibility injection.
+const FAQ_BY_PATH = {
+  '/pulse-audit-commercial/': FAQ_PULSE_AUDIT,
+  '/teach-you/': FAQ_TEACH_YOU,
+  '/done-with-you/': FAQ_DONE_WITH_YOU,
+};
+
+function buildFaqScript(pathname) {
+  const faq = FAQ_BY_PATH[pathname];
+  if (!faq) return null;
+  return `<script type="application/ld+json">${JSON.stringify(faq)}</script>`;
+}
+
 // Recursively walk a parsed JSON-LD schema and: (1) make relative URLs absolute,
 // (2) strip null / "" / "@type"-only sentinel objects, (3) inject real client reviews
 // + aggregateRating into Product/Service schemas where Squarespace emitted null,
@@ -464,6 +674,16 @@ export async function middleware(request) {
         let html = await res.text();
         // Apply schema cleanup (decode entities, absolute URLs, strip nulls)
         html = decodeJsonLdEntities(html);
+
+        // LLM Visibility Phase 1: inject a FAQPage schema on the 3 main
+        // service pages (Pulse, Teach You, Done With You). LLMs (ChatGPT,
+        // Gemini, Perplexity) extract FAQPage entries natively as citable
+        // Q&A — this hands them a clean, hand-curated source.
+        const faqScript = buildFaqScript(pathname);
+        if (faqScript && !html.includes('"@type":"FAQPage"')) {
+          html = html.replace('</head>', `${faqScript}\n</head>`);
+        }
+
         return new NextResponse(html, {
           status: res.status,
           headers: {
