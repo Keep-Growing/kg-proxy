@@ -112,9 +112,11 @@ function buildReviewBlock() {
   return { reviews, aggregate };
 }
 
-// Canonical Keep Growing NAP (Squarespace business profile still has stale data
-// — old office "94 Rue de la Victoire 75009" + malformed phone "+3363701179" missing a digit).
-// We override at the JSON-LD layer so structured data matches GBP + footer.
+// Canonical Keep Growing address (Squarespace business profile still emits the
+// old siège "94 Rue de la Victoire 75009"). We override at the JSON-LD layer
+// so structured data matches GBP + footer.
+// Phone is intentionally STRIPPED — David's GBP number is a personal mobile
+// that should not be exposed in public schemas.
 const CORRECT_ADDRESS = {
   '@type': 'PostalAddress',
   'streetAddress': '60 rue François 1er',
@@ -122,7 +124,6 @@ const CORRECT_ADDRESS = {
   'postalCode': '75008',
   'addressCountry': 'FR',
 };
-const CORRECT_TELEPHONE = '+33637011679';
 
 // Recursively walk a parsed JSON-LD schema and: (1) make relative URLs absolute,
 // (2) strip null / "" / "@type"-only sentinel objects, (3) inject real client reviews
@@ -167,11 +168,12 @@ function cleanSchemaObject(obj, parentType = null) {
     }
 
     // Overwrite stale NAP on Organization/LocalBusiness — Squarespace business
-    // profile still emits the old office address + a truncated phone.
+    // profile still emits the old office address. Strip telephone entirely:
+    // David's GBP number is a personal mobile that must not appear publicly.
     const isNapBearing = type === 'Organization' || type === 'LocalBusiness';
     if (isNapBearing) {
       if ('address' in out) out.address = { ...CORRECT_ADDRESS };
-      if ('telephone' in out) out.telephone = CORRECT_TELEPHONE;
+      if ('telephone' in out) delete out.telephone;
     }
 
     // Inject real reviews + aggregateRating for Product/Service schemas where:
