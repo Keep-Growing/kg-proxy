@@ -548,6 +548,8 @@ export const config = {
     '/diagnostic-commercial',
     '/diagnostic-commercial/',
     // Apex pages with Squarespace schema cleanup needed (cf. APEX_SCHEMA_PAGES)
+    '/',
+    '/contact/',
     '/pulse-audit-commercial/',
     '/pulse-fonds/',
     '/teach-you/',
