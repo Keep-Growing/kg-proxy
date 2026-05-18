@@ -51,8 +51,18 @@ function decodeJsonLdEntities(html) {
         .replace(/&#x2026;/gi, '…')
         .replace(/&#xa0;/gi, ' ')
         .replace(/&#160;/g, ' ')
-        // Trim leading/trailing whitespace inside string values
-        .replace(/"\s*\n\s*([^"]+?)\s*\n\s*"/g, (m, v) => `"${v.replace(/\s+/g, ' ').trim()}"`);
+        // Escape raw newlines/tabs that appear INSIDE JSON string values.
+        // Squarespace's apex Organization schema emits multi-line addresses like
+        //   "address": "94 Rue de la Victoire
+        //   Paris, IDF, 75009
+        //   France"
+        // which is invalid JSON — JSON.parse rejects it and our schema cleanup
+        // (cleanSchemaObject) never runs. Walk character-by-character and swap
+        // raw \n/\r/\t inside strings for a single space.
+        .replace(/"((?:[^"\\]|\\.)*)"/g, (m, body) => {
+          const escaped = body.replace(/[\r\n\t]+/g, ' ').replace(/ {2,}/g, ' ').trim();
+          return `"${escaped}"`;
+        });
 
       // Attempt JSON parse + structural cleanup (relative URL + null fields)
       try {
