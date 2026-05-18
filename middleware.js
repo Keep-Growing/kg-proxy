@@ -422,6 +422,7 @@ export async function middleware(request) {
   // Apex (Squarespace) schema cleanup proxy — only for pages with known schema issues.
   // Catches Product/Service schemas with relative URLs + null fields emitted by Squarespace.
   const APEX_SCHEMA_PAGES = new Set([
+    '/', '/contact/',
     '/pulse-audit-commercial/', '/pulse-fonds/', '/teach-you/',
     '/done-with-you/', '/done-for-you/', '/due-diligence-commerciale/',
     '/livre-blanc-le-collectif-commercial/', '/livre-blanc-meddicc/',
