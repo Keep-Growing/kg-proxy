@@ -97,7 +97,7 @@ function buildReviewBlock() {
     'ratingValue': '5',
     'reviewCount': String(CLIENT_REVIEWS.length),
     'bestRating': '5',
-    'worstRating': '5',
+    'worstRating': '1',
   };
   return { reviews, aggregate };
 }
