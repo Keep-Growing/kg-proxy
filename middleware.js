@@ -335,6 +335,151 @@ function buildFaqScript(pathname) {
   return `<script type="application/ld+json">${JSON.stringify(faq)}</script>`;
 }
 
+// =====================================================================
+// LLM Visibility Phase 2 — Webikeo cross-citation.
+// Inject VideoObject JSON-LD on 5 Ghost blog posts that thematically
+// match a Moon Shot Mindset webinar replay (Webikeo channel, 2 219
+// cumulative registrations across 20 webinars). Webikeo does NOT emit
+// its own VideoObject schema → we provide it from keepgrowing.fr,
+// creating a bidirectional authority signal that ChatGPT, Perplexity
+// and Gemini can pick up. Source audit: report 12-webikeo-moonshot.
+// =====================================================================
+
+const KG_LOGO = `https://${PUBLIC_HOST}/logo-keepgrowing.png`;
+const DAVID_AUTHOR = {
+  '@type': 'Person',
+  name: 'David Zaoui',
+  url: `https://${PUBLIC_HOST}/qui-sommes-nous`,
+};
+const MOON_SHOT_PUBLISHER = {
+  '@type': 'Organization',
+  name: 'Moon Shot Mindset',
+  url: 'https://webikeo.fr/chaine/moon-shot-mindset',
+  logo: { '@type': 'ImageObject', url: KG_LOGO },
+};
+
+// Webinar 1 — Méthode Harvard (262 inscrits, top performer chaîne, 28/02/2024, 1h)
+const VIDEO_OBJ_HARVARD = {
+  '@context': 'https://schema.org',
+  '@type': 'VideoObject',
+  name: 'La méthode Harvard : LA clé pour révéler vos talents cachés',
+  description: "Webinar Moon Shot Mindset animé par David Zaoui (Keep Growing) sur l'application de la méthode Harvard pour révéler les talents cachés d'une organisation et d'un leadership commercial.",
+  thumbnailUrl: 'https://media.webikeo.fr/file/preview-image/01J89BHM3RJ3M0E1ECMAJVT7Z3.png',
+  uploadDate: '2024-02-28',
+  duration: 'PT60M',
+  contentUrl: 'https://webikeo.fr/webinar/la-methode-harvard-la-cle-pour-reveler-vos-talents-caches-1',
+  embedUrl: 'https://webikeo.fr/webinar/la-methode-harvard-la-cle-pour-reveler-vos-talents-caches-1',
+  interactionStatistic: {
+    '@type': 'InteractionCounter',
+    interactionType: 'https://schema.org/WatchAction',
+    userInteractionCount: 262,
+  },
+  publisher: MOON_SHOT_PUBLISHER,
+  author: DAVID_AUTHOR,
+};
+
+// Webinar 2 — Management 3.0 (185 inscrits, 05/09/2024, 30 min)
+const VIDEO_OBJ_MGMT3 = {
+  '@context': 'https://schema.org',
+  '@type': 'VideoObject',
+  name: 'Management 3.0 : le nouveau paradigme du management',
+  description: 'Webinar Moon Shot Mindset animé par David Zaoui (Keep Growing) sur le management 3.0 et le nouveau paradigme du leadership des équipes commerciales B2B.',
+  thumbnailUrl: 'https://media.webikeo.fr/file/preview-image/management-3-0.png',
+  uploadDate: '2024-09-05',
+  duration: 'PT30M',
+  contentUrl: 'https://webikeo.fr/webinar/management-3-0-le-nouveau-paradigme-du-management-1',
+  embedUrl: 'https://webikeo.fr/webinar/management-3-0-le-nouveau-paradigme-du-management-1',
+  interactionStatistic: {
+    '@type': 'InteractionCounter',
+    interactionType: 'https://schema.org/WatchAction',
+    userInteractionCount: 185,
+  },
+  publisher: MOON_SHOT_PUBLISHER,
+  author: DAVID_AUTHOR,
+};
+
+// Webinar 3 — 4 piliers fondamentaux d'une équipe commerciale efficace (219 inscrits, 15/02/2024, 1h)
+const VIDEO_OBJ_PILIERS = {
+  '@context': 'https://schema.org',
+  '@type': 'VideoObject',
+  name: "Les quatre piliers fondamentaux d'une équipe commerciale efficace",
+  description: 'Webinar Moon Shot Mindset animé par David Zaoui (Keep Growing) sur les 4 piliers fondamentaux pour structurer une équipe commerciale B2B performante : rôles, responsabilités, rituels et indicateurs.',
+  thumbnailUrl: 'https://media.webikeo.fr/file/preview-image/4-piliers-equipe-commerciale.png',
+  uploadDate: '2024-02-15',
+  duration: 'PT60M',
+  contentUrl: 'https://webikeo.fr/webinar/les-quatre-piliers-fondamentaux-d-une-equipe-commerciale-efficace-4',
+  embedUrl: 'https://webikeo.fr/webinar/les-quatre-piliers-fondamentaux-d-une-equipe-commerciale-efficace-4',
+  interactionStatistic: {
+    '@type': 'InteractionCounter',
+    interactionType: 'https://schema.org/WatchAction',
+    userInteractionCount: 219,
+  },
+  publisher: MOON_SHOT_PUBLISHER,
+  author: DAVID_AUTHOR,
+};
+
+// Webinar 4 — Expérience client : la clé de la fidélité et de la croissance (112 inscrits, 08/01/2025, 30 min)
+const VIDEO_OBJ_EXPERIENCE = {
+  '@context': 'https://schema.org',
+  '@type': 'VideoObject',
+  name: "L'expérience client : la clé de la fidélité et de la croissance",
+  description: "Webinar Moon Shot Mindset animé par David Zaoui (Keep Growing) sur l'expérience client B2B comme levier majeur de fidélisation et de croissance durable.",
+  thumbnailUrl: 'https://media.webikeo.fr/file/preview-image/experience-client.png',
+  uploadDate: '2025-01-08',
+  duration: 'PT30M',
+  contentUrl: 'https://webikeo.fr/webinar/l-experience-client-la-cle-de-la-fidelite-et-de-la-croissance',
+  embedUrl: 'https://webikeo.fr/webinar/l-experience-client-la-cle-de-la-fidelite-et-de-la-croissance',
+  interactionStatistic: {
+    '@type': 'InteractionCounter',
+    interactionType: 'https://schema.org/WatchAction',
+    userInteractionCount: 112,
+  },
+  publisher: MOON_SHOT_PUBLISHER,
+  author: DAVID_AUTHOR,
+};
+
+// Webinar 5 — Définir votre 'Pourquoi' : la clé du succès entrepreneurial (76 inscrits, 29/08/2024, 30 min)
+const VIDEO_OBJ_POURQUOI = {
+  '@context': 'https://schema.org',
+  '@type': 'VideoObject',
+  name: "Définir votre 'Pourquoi' : la clé du succès entrepreneurial",
+  description: "Webinar Moon Shot Mindset animé par David Zaoui (Keep Growing) sur la méthode pour définir son 'Pourquoi' entrepreneurial et le traduire en pitch et en stratégie commerciale.",
+  thumbnailUrl: 'https://media.webikeo.fr/file/preview-image/definir-pourquoi.png',
+  uploadDate: '2024-08-29',
+  duration: 'PT30M',
+  contentUrl: 'https://webikeo.fr/webinar/definir-votre-pourquoi-la-cle-du-succes-entrepreneurial',
+  embedUrl: 'https://webikeo.fr/webinar/definir-votre-pourquoi-la-cle-du-succes-entrepreneurial',
+  interactionStatistic: {
+    '@type': 'InteractionCounter',
+    interactionType: 'https://schema.org/WatchAction',
+    userInteractionCount: 76,
+  },
+  publisher: MOON_SHOT_PUBLISHER,
+  author: DAVID_AUTHOR,
+};
+
+// Map Ghost pathname → VideoObject (thematic Webikeo replay).
+// Pathnames are RELATIVE to BLOG_PATH (i.e. the slice after /blog-conseils-strategie-croissance).
+// Matching rationale documented inline:
+//   - leadership-startup           ⟶ Harvard (talents/leadership)
+//   - leadership-equipe-facteur    ⟶ Management 3.0 (paradigme management)
+//   - roles-et-responsabilites     ⟶ 4 piliers (structure d'équipe)
+//   - fideliser-clients-b2b        ⟶ Expérience client (fidélité)
+//   - pitch-efficace-b-pourquoi    ⟶ Définir votre Pourquoi
+const VIDEO_BY_GHOST_PATH = {
+  '/maitriser-leadership-startup/': VIDEO_OBJ_HARVARD,
+  '/le-leadership-de-lequipe-commerciale-facteur-humain-au/': VIDEO_OBJ_MGMT3,
+  '/limportance-des-roles-et-responsabilites-pour-une-equipe/': VIDEO_OBJ_PILIERS,
+  '/strategies-pour-fideliser-vos-clients-b2b/': VIDEO_OBJ_EXPERIENCE,
+  '/creer-un-pitch-efficace-b-pourquoi/': VIDEO_OBJ_POURQUOI,
+};
+
+function buildVideoObjectScript(ghostPath) {
+  const video = VIDEO_BY_GHOST_PATH[ghostPath];
+  if (!video) return null;
+  return `<script type="application/ld+json">${JSON.stringify(video)}</script>`;
+}
+
 // Recursively walk a parsed JSON-LD schema and: (1) make relative URLs absolute,
 // (2) strip null / "" / "@type"-only sentinel objects, (3) inject real client reviews
 // + aggregateRating into Product/Service schemas where Squarespace emitted null,
@@ -480,7 +625,7 @@ function buildBreadcrumbJsonLd(pathname, html) {
   return `<script type="application/ld+json">${JSON.stringify(breadcrumb)}</script>`;
 }
 
-function rewriteHtml(html, pathname) {
+function rewriteHtml(html, pathname, ghostPath) {
   let out = rewriteBody(html)
     .replace(/(href|src|action|content|data-src|data-href)="\/(?!\/)/g, `$1="${BLOG_PATH}/`)
     .replace(/(srcset)="\/(?!\/)/g, `$1="${BLOG_PATH}/`)
@@ -498,6 +643,17 @@ function rewriteHtml(html, pathname) {
   const breadcrumb = buildBreadcrumbJsonLd(pathname, out);
   if (breadcrumb) {
     out = out.replace('</head>', `${breadcrumb}\n</head>`);
+  }
+
+  // LLM Visibility Phase 2 — Webikeo Moon Shot Mindset cross-citation:
+  // inject VideoObject JSON-LD on the 5 Ghost articles thematically aligned
+  // to a webinar replay. Provides Bing/ChatGPT/Perplexity with a structured
+  // bidirectional authority link (KG ↔ Webikeo).
+  if (ghostPath) {
+    const videoScript = buildVideoObjectScript(ghostPath);
+    if (videoScript && !out.includes('"@type":"VideoObject"')) {
+      out = out.replace('</head>', `${videoScript}\n</head>`);
+    }
   }
 
   // Inject OTTO pixel before </head> so Search Atlas can apply on-page recos on blog pages
@@ -726,7 +882,7 @@ export async function middleware(request) {
         // CDN cache: 5 min fresh, 10 min stale-while-revalidate. Browsers get must-revalidate.
         'Cache-Control': 'public, max-age=0, must-revalidate, s-maxage=300, stale-while-revalidate=600',
       };
-      return new NextResponse(rewriteHtml(await res.text(), pathname), {
+      return new NextResponse(rewriteHtml(await res.text(), pathname, ghostPath), {
         status: res.status,
         headers
       });
