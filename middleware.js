@@ -831,6 +831,17 @@ export async function middleware(request) {
         // Apply schema cleanup (decode entities, absolute URLs, strip nulls)
         html = decodeJsonLdEntities(html);
 
+        // Fix Squarespace canonical bug: it emits the canonical href WITHOUT
+        // a trailing slash, while the public URL is served WITH a trailing
+        // slash. Google then flags every apex page as "duplicate, canonical
+        // differs" (GSC report 2026-05-26). Force canonical to match the
+        // public URL exactly.
+        const canonicalUrl = `https://${PUBLIC_HOST}${pathname}`;
+        html = html.replace(
+          /<link\s+rel=["']canonical["']\s+href=["']https?:\/\/[^"']*?(?:\/)?["']\s*\/?>/i,
+          `<link rel="canonical" href="${canonicalUrl}"/>`
+        );
+
         // LLM Visibility Phase 1: inject a FAQPage schema on the 3 main
         // service pages (Pulse, Teach You, Done With You). LLMs (ChatGPT,
         // Gemini, Perplexity) extract FAQPage entries natively as citable
