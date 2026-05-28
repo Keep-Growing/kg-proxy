@@ -788,19 +788,55 @@ export async function middleware(request) {
     });
   }
 
-  // Sitemap rewrite: trailing slash + remove non-indexable patterns (tag/author/page-N)
-  if (pathname === '/sitemap.xml' || pathname === '/sitemap.xml/') {
+  // Squarespace-only sitemap (legacy URL — kept for direct access).
+  if (pathname === '/sitemap-squarespace.xml' || pathname === '/sitemap-squarespace.xml/') {
     try {
       const res = await fetch(`https://${SQUARESPACE_HOST}/sitemap.xml`, { redirect: 'follow' });
-      const ct = res.headers.get('content-type') || 'application/xml; charset=utf-8';
       const xml = await res.text();
       return new NextResponse(addTrailingSlashesToSitemap(xml), {
         status: res.status,
-        headers: { 'Content-Type': ct, 'Cache-Control': 'public, max-age=3600, s-maxage=3600' }
+        headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=3600, s-maxage=3600' }
       });
     } catch {
       return NextResponse.next();
     }
+  }
+
+  // /sitemap.xml — return a sitemap INDEX that references both the Squarespace
+  // sitemap AND the Ghost (blog) sitemap. Without this, OTTO/Google only crawl
+  // the Squarespace URLs and miss every recent Ghost blog post (DKN articles,
+  // rebrand posts, scheduled content). Diagnosed via OTTO inventory 2026-05-26:
+  // 158 URLs in sitemap vs 165 total pages — Ghost sub-sitemap was isolated.
+  if (pathname === '/sitemap.xml' || pathname === '/sitemap.xml/') {
+    const now = new Date().toISOString();
+    const indexXml = `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap>
+    <loc>https://${PUBLIC_HOST}/sitemap-squarespace.xml</loc>
+    <lastmod>${now}</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://${PUBLIC_HOST}${BLOG_PATH}/sitemap-pages.xml</loc>
+    <lastmod>${now}</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://${PUBLIC_HOST}${BLOG_PATH}/sitemap-posts.xml</loc>
+    <lastmod>${now}</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://${PUBLIC_HOST}${BLOG_PATH}/sitemap-authors.xml</loc>
+    <lastmod>${now}</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://${PUBLIC_HOST}${BLOG_PATH}/sitemap-tags.xml</loc>
+    <lastmod>${now}</lastmod>
+  </sitemap>
+</sitemapindex>
+`;
+    return new NextResponse(indexXml, {
+      status: 200,
+      headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=3600, s-maxage=3600' }
+    });
   }
 
   // Apex (Squarespace) schema cleanup proxy — only for pages with known schema issues.
@@ -921,6 +957,8 @@ export const config = {
     '/blog-conseils-stratgie-croissance(.*)',
     '/sitemap.xml',
     '/sitemap.xml/',
+    '/sitemap-squarespace.xml',
+    '/sitemap-squarespace.xml/',
     '/2b3c37d13ada98fe63c1cb99c4dfd1a7.txt',
     '/2b3c37d13ada98fe63c1cb99c4dfd1a7.txt/',
     // Legacy URLs — caught by lookupLegacyRedirect()
