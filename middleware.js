@@ -23,10 +23,25 @@ function smartTruncate(str, max) {
   return str.substr(0, max - 1).replace(/\s+\S*$/, '').replace(/[\s\p{P}]+$/u, '') + '…';
 }
 
+// Decode common HTML entities in visible HTML outside of <script> and <style>
+// blocks. Ghost outputs apostrophes as `&#x27;` in titles, excerpts, alt
+// attributes and button labels. Browsers decode them transparently but some
+// LLM crawlers and SEO scrapers see the raw entities, hurting extraction.
+// Keep entities inside <script> (e.g. JSON-LD has its own decoder) and
+// <style> blocks untouched.
+function decodeApostropheEntities(html) {
+  return html.replace(
+    /(<script\b[^>]*>[\s\S]*?<\/script>|<style\b[^>]*>[\s\S]*?<\/style>)|(&#x27;|&#39;|&apos;)/gi,
+    (match, skip, entity) => skip || "'"
+  );
+}
+
 function rewriteBody(text) {
-  return text
-    .replace(/https?:\/\/blog-conseils-strategie-croissance\.ghost\.io/g, PUBLIC_BASE)
-    .replace(/blog-conseils-strategie-croissance\.ghost\.io/g, `${PUBLIC_HOST}${BLOG_PATH}`);
+  return decodeApostropheEntities(
+    text
+      .replace(/https?:\/\/blog-conseils-strategie-croissance\.ghost\.io/g, PUBLIC_BASE)
+      .replace(/blog-conseils-strategie-croissance\.ghost\.io/g, `${PUBLIC_HOST}${BLOG_PATH}`)
+  );
 }
 
 // Decode HTML entities INSIDE JSON-LD <script> blocks + clean schema bugs:
