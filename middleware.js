@@ -95,25 +95,35 @@ function decodeJsonLdEntities(html) {
 
 // Authentic client reviews (extracted from Recommandations clients + Témoignages Pulse-FR docx).
 // Used to enrich Product/Service schemas where Squarespace emits null review/aggregateRating.
+// IMPORTANT: jobTitle = function (CEO, VP, etc.), worksFor.name = company. Previous version
+// used jobTitle for company name which violates schema.org semantics → Google flagged invalid.
 const CLIENT_REVIEWS = [
-  { name: 'Laurent Bouchoucha', company: 'Alcatel', body: "Keep Growing propose un accompagnement dans la durée qui fait toute la différence. Les recommandations sont simples, pertinentes, immédiatement applicables. L'expertise de David Zaoui, nourrie par son expérience produit et ventes en start-up, scale-up et grands groupes, apporte un regard global et percutant.", date: '2025-06-15' },
-  { name: 'Valentin Lecomte', company: 'Kuantom', body: "L'accompagnement avec Keep Growing a catalysé un changement de posture essentiel, propulsant nos ventes et renforçant notre équipe, grâce à une approche qui allie focus, engagement et humanité.", date: '2025-04-22' },
-  { name: 'Manon Chevalier', company: 'Kapptivate', body: "Grâce à l'expertise et au soutien de David de Keep Growing, nous avons transformé notre approche commerciale en une machine bien huilée, rendant l'ambition non seulement réalisable mais sereinement gérable, étape par étape.", date: '2025-03-10' },
-  { name: 'Alexis Kaplan', company: 'Kuantom', body: "David est la personne que vous voulez à vos côtés pour vous accompagner à 360 dans votre développement commercial. De la mécanique commerciale à la stratégie d'implantation marché, il nous a fait gagner un temps précieux et beaucoup d'argent dans notre phase de scale.", date: '2025-05-08' },
-  { name: 'Sébastien Lecocq', company: 'Arkhos', body: "David Zaoui est un véritable leader, capable de penser stratégiquement et d'accompagner des organisations avec talents. Une personne fiable, brillante et compétente. Je recommande vivement.", date: '2024-11-19' },
-  { name: 'François de Pimodan', company: 'Bleckwen', body: "David est un excellent coach que ce soit pour accompagner la structuration d'une équipe commerciale ou le développement personnel et la gestion de carrière.", date: '2024-10-03' },
-  { name: 'Philippe Cros', company: 'Alcatel', body: "KeepGrowing à travers David a pleinement contribué à notre transformation : équipe complète, bon profil au bon poste, feuille de route claire & documentée, One Team en mode Guerrier.", date: '2025-04-18' },
-  { name: 'Philippe Bletterie', company: 'Alcatel', body: "David prend le temps de comprendre les enjeux spécifiques de chacun, avec une écoute bienveillante mais toujours exigeante. Conseils concrets, outils puissants, et une capacité rare à faire émerger des prises de conscience stratégiques. Un véritable levier de transformation.", date: '2025-02-14' },
-  { name: 'Yoann Cohen', company: 'Alcatel', body: "Commencer dans le management n'est pas une tâche facile dans des organisations complexes. David a su me guider et m'accompagner avec bienveillance, me permettant de grandir plus rapidement dans mon nouveau rôle.", date: '2024-12-05' },
-  { name: 'Alexandre Grais', company: 'Kapptivate', body: "L'accompagnement avec Keep Growing a transformé ma vision et ma structure commerciale, me permettant de prendre du recul et d'adopter une approche stratégique fluide, efficace et profondément humaine.", date: '2025-03-12' },
+  { name: 'Laurent Bouchoucha', jobTitle: 'VP Business Development & Solutions', company: 'Alcatel', body: "La majorité des formations se limitent à des 'one shots' sans réel suivi. Keep Growing propose un accompagnement dans la durée qui fait toute la différence. Cette continuité permet un véritable ancrage des apprentissages et une mise en application concrète des conseils reçus. Les recommandations sont simples, pertinentes, immédiatement applicables, adaptées à nos contraintes du quotidien. L'expertise de David Zaoui, nourrie par son expérience produit et ventes en start-up, scale-up et grands groupes, apporte un regard global et percutant. Keep Growing, c'est un vrai partenaire de croissance — pour les individus comme pour l'organisation.", date: '2025-09-12' },
+  { name: 'Valentin Lecomte', jobTitle: 'CEO', company: 'Kuantom', body: "L'accompagnement avec Keep Growing a permis un changement de posture essentiel, propulsant nos ventes et renforçant notre équipe, grâce à une approche qui allie focus, engagement et humanité. David a su comprendre nos enjeux spécifiques et nous proposer des outils opérationnels immédiatement applicables. En quelques mois, notre dynamique commerciale a changé : meilleure cohésion d'équipe, pipeline structuré, conversations stratégiques avec nos prospects clés. Un vrai partenaire de croissance pour une scale-up qui veut professionnaliser sa fonction commerciale.", date: '2025-04-22' },
+  { name: 'Manon Chevalier', jobTitle: 'Directrice Commerciale', company: 'Kapptivate', body: "Grâce à l'expertise et au soutien de David de Keep Growing, nous avons transformé notre approche commerciale en une machine bien huilée, rendant l'ambition non seulement réalisable mais sereinement gérable, étape par étape. David apporte une méthodologie claire, un cadre structurant, et surtout une capacité unique à challenger nos certitudes avec bienveillance. Les rituels qu'il nous a aidés à mettre en place ont créé un alignement total au sein de l'équipe commerciale. Aujourd'hui nous avançons avec sérénité sur des objectifs ambitieux.", date: '2025-07-08' },
+  { name: 'Alexis Kaplan', jobTitle: 'Co-fondateur', company: 'Kuantom', body: "David est la personne que vous voulez à vos côtés pour vous accompagner à 360 dans votre développement commercial. Sans compter son super réseau et les belles opportunités qu'il nous a apportées, David nous a grandement aidé à restructurer le pôle business chez Kuantom : de la mécanique commerciale à la stratégie d'implantation marché, il nous a fait gagner un temps précieux et beaucoup d'argent dans notre phase de scale marché. Je suis ravi d'être accompagné au quotidien par lui et son équipe d'experts. Je le recommande vivement !", date: '2025-03-15' },
+  { name: 'Sébastien Lecocq', jobTitle: 'CEO', company: 'Arkhos', body: "David Zaoui est un professionnel exceptionnel doté d'une large gamme de compétences et d'expérience. J'ai le plaisir de travailler avec David et je peux dire en toute confiance qu'il est une personne fiable, brillante et compétente. David est un véritable leader, capable de penser stratégiquement et d'accompagner des organisations avec talents. Je recommande vivement David pour toute opportunité professionnelle et je suis convaincu qu'il sera un atout pour votre équipe.", date: '2024-11-20' },
+  { name: 'François de Pimodan', jobTitle: 'Chief Sales Officer (CSO)', company: 'Bleckwen', body: "David est un excellent Business Partner que ce soit pour accompagner la structuration d'une équipe commerciale ou le développement personnel et la gestion de carrière. Son approche combine pragmatisme business et écoute humaine. Nous avons travaillé ensemble sur la mise en place de notre direction commerciale chez Bleckwen, et David a apporté la vision externe dont nous avions besoin pour passer un cap : structuration des processus, montée en compétences de l'équipe, alignement stratégique. Un accompagnement qui fait vraiment la différence pour une scale-up tech.", date: '2024-12-05' },
+  { name: 'Philippe Cros', jobTitle: 'Directeur de Région, Grand Est', company: 'Alcatel', body: "2024 : on fait le chiffre (+5% YoY growth), mais dans la douleur. Une équipe absente (1/3 des effectifs), déstructurée, peu alignée. 2025 : bon 1er trimestre qui laisse entrevoir la réalisation de l'objectif, avec une équipe complète (recrutements validés), le bon profil au bon poste, une feuille de route claire et documentée, One Team en mode Guerrier. Keep Growing à travers David a pleinement contribué à cette transformation. David a su Écouter, Comprendre, Questionner, Statuer, Conseiller et Monitorer. Merci Keep Growing.", date: '2025-05-18' },
+  { name: 'Philippe Bletterie', jobTitle: 'SVP, Global Marketing & Communication', company: 'Alcatel', body: "J'ai eu la chance de bénéficier de l'accompagnement de David dans le cadre du programme Teach You — Management et Leadership Commercial. La combinaison d'un accompagnement collectif inspirant et d'un accompagnement individuel profondément pertinent fait la différence. David prend le temps de comprendre les enjeux spécifiques de chacun, avec une écoute bienveillante mais toujours exigeante. Il apporte des conseils concrets, des outils puissants, et une capacité rare à faire émerger des prises de conscience stratégiques. Un véritable accompagnement de transformation personnelle et professionnelle, profondément humain.", date: '2025-08-03' },
+  { name: 'Yoann Cohen', jobTitle: 'Senior Account Executive', company: 'Alcatel', body: "Commencer dans le management n'est pas une tâche facile, surtout dans des organisations complexes. David et plus largement Keep Growing m'ont permis par leur accompagnement de prendre mes repères et du recul au quotidien. Au travers de leur enseignement théorique sur le rôle du manager mais également de leurs conseils autour du rôle du leader, David a su me guider et m'accompagner avec bienveillance, me permettant ainsi de grandir plus rapidement dans mon nouveau rôle. Une expérience qui transforme la posture de management.", date: '2025-06-25' },
+  { name: 'Alexandre Grais', jobTitle: 'Co-fondateur', company: 'Kapptivate', body: "L'accompagnement avec Keep Growing a transformé ma vision et ma structure commerciale, me permettant de prendre du recul sur le quotidien et d'adopter une approche stratégique fluide, efficace et profondément humaine pour mon entreprise. David m'aide à incarner un leadership cohérent et serein, qui rejaillit sur toute l'organisation. Je recommande sans réserve à tout fondateur qui veut professionnaliser son approche commerciale tout en gardant son ADN entrepreneurial.", date: '2025-02-10' },
+  { name: 'David Chauvin', jobTitle: 'Fondateur', company: 'IKAKENE', body: "Grâce à l'accompagnement personnalisé et au mentoring expert de Keep Growing, je me suis libéré des barrières professionnelles accumulées au fil des ans, découvrant et valorisant mes véritables talents pour entamer un nouveau chapitre de ma carrière avec confiance et équilibre. David a cette capacité rare de combiner exigence et bienveillance pour faire émerger ce qu'il y a de meilleur en chacun. Un partenaire de transformation pour qui veut redéfinir sa trajectoire professionnelle avec lucidité.", date: '2024-10-08' },
+  { name: 'Fabien Rainon', jobTitle: 'Président', company: 'Caravelle Finance', body: "J'ai pu apprécier les valeurs et les compétences qui animent l'action et les expertises de David auprès de mes clients. L'appui proposé et les moyens qui l'accompagnent sont pour les entrepreneurs une vraie source de bénéfices. David a cette qualité rare de savoir s'adapter à chaque dirigeant, à chaque contexte, en gardant toujours une approche structurée et orientée résultats. Je recommande Keep Growing à tous les entrepreneurs qui veulent franchir un cap sur leur développement commercial.", date: '2025-01-14' },
 ];
 
-// Build a Review array + AggregateRating block for schemas missing them
+// Build a Review array + AggregateRating block for schemas missing them.
+// Schema.org compliant: jobTitle = function, worksFor.name = company (Organization).
 function buildReviewBlock() {
   const reviews = CLIENT_REVIEWS.map(r => ({
     '@type': 'Review',
     'reviewRating': { '@type': 'Rating', 'ratingValue': '5', 'bestRating': '5' },
-    'author': { '@type': 'Person', 'name': r.name, ...(r.company ? { 'jobTitle': r.company } : {}) },
+    'author': {
+      '@type': 'Person',
+      'name': r.name,
+      ...(r.jobTitle ? { 'jobTitle': r.jobTitle } : {}),
+      ...(r.company ? { 'worksFor': { '@type': 'Organization', 'name': r.company } } : {}),
+    },
     'reviewBody': r.body,
     'datePublished': r.date,
   }));
@@ -690,9 +700,10 @@ function addTrailingSlashesToSitemap(xml) {
         u.pathname += '/';
         return `<loc>${u.toString()}</loc>`;
       }
-      // Squarespace (apex) canonical excludes trailing slash → align sitemap without slash
-      if (!u.pathname.startsWith(BLOG_PATH) && u.pathname !== '/' && u.pathname.endsWith('/')) {
-        u.pathname = u.pathname.replace(/\/$/, '');
+      // Squarespace (apex) canonical INCLUDES trailing slash (Vercel 308 enforces this).
+      // Sitemap must match canonical, otherwise Google flags "Page avec redirection".
+      if (!u.pathname.startsWith(BLOG_PATH) && u.pathname !== '/' && !u.pathname.endsWith('/')) {
+        u.pathname += '/';
         return `<loc>${u.toString()}</loc>`;
       }
       return match;
@@ -713,6 +724,9 @@ const BLOG_PATH_TYPO_RX = /^\/blog-conseils-stratgie-croissance(\/.*)?$/i;
 // off-domain Location headers (to bamboo-celery-eayp.squarespace.com), losing SEO juice.
 const LEGACY_REDIRECTS = {
   // Apex / Squarespace paths
+  // /home and /home/ are Squarespace duplicate of /, must 301 to root
+  '/home': '/',
+  '/home/': '/',
   '/nos-solutions': '/pulse-audit-commercial/',
   '/nos-accompagnements': '/done-with-you/',
   '/articles-linkedin': '/articles-linkedin-dirigeant-commercial/',
