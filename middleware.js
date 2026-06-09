@@ -886,6 +886,17 @@ export async function middleware(request) {
     '/atelier-disc-leadership/', '/atelier-disc-devenez-influent/',
     '/atelier-vision-strategie/', '/atelier-culture-adn/',
     '/merci-rdv/', '/a-propos-keep-growing/',
+    // Added 2026-06-09: Squarespace emits canonical without trailing slash on
+    // these pages too. GSC flagged /bilan-de-competences/ as "Page en double
+    // — canonical différent" (Coverage Validation 2026-06-09). All 10 confirmed
+    // via canonical check. Adding to ensure middleware forces canonical match.
+    '/bilan-de-competences/', '/cabinets-experts/',
+    '/cgu/', '/cgv/',
+    '/frequent-asked-questions/',
+    '/livres-blancs-expertise-commerciale/',
+    '/articles-linkedin-dirigeant-commercial/',
+    '/newsletter-strategie-commerciale-dirigeants/',
+    '/rendezvous/', '/videos-dirigeants-commercial/',
   ]);
   if (APEX_SCHEMA_PAGES.has(pathname)) {
     try {
