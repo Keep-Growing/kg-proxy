@@ -1049,5 +1049,16 @@ export const config = {
     '/atelier-culture-adn/',
     '/merci-rdv/',
     '/a-propos-keep-growing/',
+    // Added 2026-06-09: pages with Squarespace canonical bug (missing trailing slash)
+    '/bilan-de-competences/',
+    '/cabinets-experts/',
+    '/cgu/',
+    '/cgv/',
+    '/frequent-asked-questions/',
+    '/livres-blancs-expertise-commerciale/',
+    '/articles-linkedin-dirigeant-commercial/',
+    '/newsletter-strategie-commerciale-dirigeants/',
+    '/rendezvous/',
+    '/videos-dirigeants-commercial/',
   ]
 };
