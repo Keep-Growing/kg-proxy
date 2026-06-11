@@ -975,6 +975,22 @@ export async function middleware(request) {
         // Fix internal links that point at redirecting URLs (trailing slash + legacy)
         html = fixInternalRedirectLinks(html);
 
+        // Conversion-page guard: OTTO's "missing headings" autopilot injects
+        // large AI-generated H2+paragraph blocks client-side. On conversion
+        // pages (contact, rendezvous, thank-you) that violates the
+        // one-page-one-CTA rule, and the OTTO API rejects editing list-type
+        // suggestions. Guard: a tiny MutationObserver that strips any
+        // body-content element OTTO injects on these pages. Head-level
+        // optimizations (title, meta, OG) are untouched.
+        const CONVERSION_PAGES = new Set([
+          '/contact/', '/rendezvous/', '/merci-rdv/',
+          '/contact-vision/', '/contact-culture/',
+        ]);
+        if (CONVERSION_PAGES.has(pathname)) {
+          const guard = '<script>(function(){var sel=\'h2[data-otto-pixel="dynamic-seo"],h3[data-otto-pixel="dynamic-seo"],p[data-otto-pixel="dynamic-seo"],div[data-otto-pixel="dynamic-seo"]\';var kill=function(n){try{if(n.matches&&n.matches(sel))n.remove();}catch(e){}};new MutationObserver(function(ms){for(var i=0;i<ms.length;i++){var a=ms[i].addedNodes;for(var j=0;j<a.length;j++)kill(a[j]);}}).observe(document.documentElement,{childList:true,subtree:true});document.addEventListener("DOMContentLoaded",function(){document.querySelectorAll(sel).forEach(function(n){n.remove();});});})();</script>';
+          html = html.replace('</head>', `${guard}\n</head>`);
+        }
+
         // LLM Visibility Phase 1: inject a FAQPage schema on the 3 main
         // service pages (Pulse, Teach You, Done With You). LLMs (ChatGPT,
         // Gemini, Perplexity) extract FAQPage entries natively as citable
