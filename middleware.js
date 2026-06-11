@@ -975,6 +975,25 @@ export async function middleware(request) {
         // Fix internal links that point at redirecting URLs (trailing slash + legacy)
         html = fixInternalRedirectLinks(html);
 
+        // Mobile LCP fix (audit v2 2026-06-11): Squarespace loads 5-8 decorative
+        // GPU image-effect scripts (refracted-circles, liquid, film-grain,
+        // parallax, refracted-lines) on every page. They are pure decoration,
+        // cost main-thread time and delay LCP on mobile (14.7s measured).
+        // Strip them server-side since the Squarespace editor toggles are
+        // per-section and easy to regress. Responsive-image loaders
+        // (imageFluid.visitor.js etc.) are NOT touched.
+        html = html.replace(/<script[^>]*src="[^"]*\/image-effect-[^"]*"[^>]*><\/script>\s*/gi, '');
+
+        // Resource hints: Squarespace hero images come from images.squarespace-cdn.com
+        // and static1.squarespace.com — preconnect shaves DNS+TLS off the LCP path.
+        if (!html.includes('rel="preconnect" href="https://images.squarespace-cdn.com"')) {
+          html = html.replace(
+            '</head>',
+            '<link rel="preconnect" href="https://images.squarespace-cdn.com" crossorigin/>\n' +
+            '<link rel="preconnect" href="https://static1.squarespace.com" crossorigin/>\n</head>'
+          );
+        }
+
         // Conversion-page guard: OTTO's "missing headings" autopilot injects
         // large AI-generated H2+paragraph blocks client-side. On conversion
         // pages (contact, rendezvous, thank-you) that violates the
