@@ -139,6 +139,25 @@ function buildReviewBlock() {
   return { reviews, aggregate };
 }
 
+// VideoObject ItemList for /videos-dirigeants-commercial/ — closes the audit
+// gap "Pas de VideoObject schema" (audit v1 §8 / v2). Top 6 long-form videos
+// from the Keep Growing channel (real data: youtube-audit-2026-05-17, titles
+// post emoji-cleanup). Lets Google/Bing/LLMs surface the videos as structured
+// entities tied to the brand.
+const VIDEOS_PAGE_SCHEMA = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  'name': 'Vidéos Keep Growing — Dirigeants & Commerciaux B2B',
+  'itemListElement': [
+    { '@type': 'VideoObject', 'position': 1, 'name': "KPIs : L'art de piloter votre entreprise avec les bons indicateurs", 'description': "Les KPIs essentiels par département pour piloter sans se noyer dans la surinformation.", 'thumbnailUrl': 'https://i.ytimg.com/vi/OstjD0_70-I/hqdefault.jpg', 'uploadDate': '2025-02-05', 'duration': 'PT1M28S', 'embedUrl': 'https://www.youtube.com/embed/OstjD0_70-I', 'url': 'https://www.youtube.com/watch?v=OstjD0_70-I', 'publisher': { '@type': 'Organization', 'name': 'Keep Growing', 'url': 'https://keepgrowing.fr' } },
+    { '@type': 'VideoObject', 'position': 2, 'name': "L'expérience client, ce n'est pas un copier-coller", 'description': "Avant d'améliorer l'expérience client, poser LA vraie question : quelles sont les valeurs et la culture de l'entreprise ?", 'thumbnailUrl': 'https://i.ytimg.com/vi/iQumL_QDfB0/hqdefault.jpg', 'uploadDate': '2025-02-19', 'duration': 'PT1M22S', 'embedUrl': 'https://www.youtube.com/embed/iQumL_QDfB0', 'url': 'https://www.youtube.com/watch?v=iQumL_QDfB0', 'publisher': { '@type': 'Organization', 'name': 'Keep Growing', 'url': 'https://keepgrowing.fr' } },
+    { '@type': 'VideoObject', 'position': 3, 'name': 'Keep Growing : un Business Partner pour votre croissance', 'description': "David Zaoui et Jean-Baptiste Lendrin, co-fondateurs de Keep Growing, présentent le métier de Business Partner commercial.", 'thumbnailUrl': 'https://i.ytimg.com/vi/MKSBI0KdhKM/hqdefault.jpg', 'uploadDate': '2023-01-18', 'duration': 'PT2M34S', 'embedUrl': 'https://www.youtube.com/embed/MKSBI0KdhKM', 'url': 'https://www.youtube.com/watch?v=MKSBI0KdhKM', 'publisher': { '@type': 'Organization', 'name': 'Keep Growing', 'url': 'https://keepgrowing.fr' } },
+    { '@type': 'VideoObject', 'position': 4, 'name': 'Valeur perçue : le vrai levier de différenciation en B2B', 'description': "Chez les grands comptes, prix + fonctionnalités ne suffisent pas : la valeur perçue fait la différence.", 'thumbnailUrl': 'https://i.ytimg.com/vi/UWBWcZYvGoc/hqdefault.jpg', 'uploadDate': '2025-03-19', 'duration': 'PT1M10S', 'embedUrl': 'https://www.youtube.com/embed/UWBWcZYvGoc', 'url': 'https://www.youtube.com/watch?v=UWBWcZYvGoc', 'publisher': { '@type': 'Organization', 'name': 'Keep Growing', 'url': 'https://keepgrowing.fr' } },
+    { '@type': 'VideoObject', 'position': 5, 'name': 'Recrutement & onboarding : un enjeu stratégique à double risque', 'description': "Recruter un commercial est une gestion du risque à deux niveaux : le choix du profil et la réussite de son intégration.", 'thumbnailUrl': 'https://i.ytimg.com/vi/PXM34yXxTuo/hqdefault.jpg', 'uploadDate': '2025-04-02', 'duration': 'PT1M28S', 'embedUrl': 'https://www.youtube.com/embed/PXM34yXxTuo', 'url': 'https://www.youtube.com/watch?v=PXM34yXxTuo', 'publisher': { '@type': 'Organization', 'name': 'Keep Growing', 'url': 'https://keepgrowing.fr' } },
+    { '@type': 'VideoObject', 'position': 6, 'name': 'Interview de François de Pimodan — témoignage client Keep Growing', 'description': "L'impact d'un accompagnement global sur la structuration commerciale, raconté par un dirigeant accompagné.", 'thumbnailUrl': 'https://i.ytimg.com/vi/Pv82Erdy3kk/hqdefault.jpg', 'uploadDate': '2023-11-08', 'duration': 'PT5M16S', 'embedUrl': 'https://www.youtube.com/embed/Pv82Erdy3kk', 'url': 'https://www.youtube.com/watch?v=Pv82Erdy3kk', 'publisher': { '@type': 'Organization', 'name': 'Keep Growing', 'url': 'https://keepgrowing.fr' } }
+  ]
+};
+
 // Canonical Keep Growing address (Squarespace business profile still emits the
 // old siège "94 Rue de la Victoire 75009"). We override at the JSON-LD layer
 // so structured data matches GBP + footer.
@@ -992,6 +1011,11 @@ export async function middleware(request) {
             '<link rel="preconnect" href="https://images.squarespace-cdn.com" crossorigin/>\n' +
             '<link rel="preconnect" href="https://static1.squarespace.com" crossorigin/>\n</head>'
           );
+        }
+
+        // VideoObject ItemList on the videos page (audit gap fix)
+        if (pathname === '/videos-dirigeants-commercial/' && !html.includes('"@type":"VideoObject"') && !html.includes("'@type': 'VideoObject'")) {
+          html = html.replace('</head>', `<script type="application/ld+json">${JSON.stringify(VIDEOS_PAGE_SCHEMA)}</script>\n</head>`);
         }
 
         // Conversion-page guard: OTTO's "missing headings" autopilot injects
