@@ -688,6 +688,9 @@ function rewriteHtml(html, pathname, ghostPath) {
     out = out.replace('</head>', `${OTTO_PIXEL}\n</head>`);
   }
 
+  // Fix internal links that point at redirecting URLs (trailing slash + legacy)
+  out = fixInternalRedirectLinks(out);
+
   // Noindex tag/author archive pages. These are thin, duplicate-content listing
   // pages (Ghost auto-generated) that GSC/OTTO flag as "non unique content" +
   // "non unique title". Standard SEO practice: keep them crawlable (follow) so
@@ -779,6 +782,39 @@ function lookupLegacyRedirect(pathname) {
   const key = lower.endsWith('/') && lower.length > 1 ? lower.slice(0, -1) : lower;
   if (LEGACY_REDIRECTS[key]) return LEGACY_REDIRECTS[key];
   return null;
+}
+
+// Rewrite internal links so they point at their FINAL destination instead of
+// going through a redirect hop. Replaces the OTTO "Issues with Links" fix
+// (952 links across 137 pages in audit 114515) deterministically, at zero AI
+// quota. Two cases:
+//   1. internal links missing the trailing slash (Vercel 308s them) → add "/"
+//   2. links to legacy paths still present in old content → LEGACY_REDIRECTS target
+// Also normalizes absolute www.keepgrowing.fr hrefs to the apex host.
+// Skips: external URLs, protocol-relative (//), file paths (.pdf, .xml, ...),
+// root "/", and preserves any ?query / #fragment suffix.
+function fixInternalRedirectLinks(html) {
+  return html.replace(
+    /(href=")(https?:\/\/(?:www\.)?keepgrowing\.fr)?(\/(?!\/)[^"]*)(")/g,
+    (match, attr, host, path, quote) => {
+      const m = path.match(/^([^?#]*)([?#][^"]*)?$/);
+      let p = (m && m[1]) || '';
+      const suffix = (m && m[2]) || '';
+      if (!p || p === '/') return match;
+      const key = (p.endsWith('/') ? p.slice(0, -1) : p).toLowerCase();
+      if (LEGACY_REDIRECTS[key]) {
+        p = LEGACY_REDIRECTS[key];
+      } else if (/\.[a-z0-9]{1,5}$/i.test(p)) {
+        return match; // file (pdf, xml, txt, images…) — no trailing slash
+      } else if (!p.endsWith('/')) {
+        p += '/';
+      } else if (!host) {
+        return match; // already canonical and relative — nothing to fix
+      }
+      const prefix = host ? `https://${PUBLIC_HOST}` : '';
+      return `${attr}${prefix}${p}${suffix}${quote}`;
+    }
+  );
 }
 
 // Tag/author URL normalization → 301 redirect to canonical ASCII-lowercase-hyphenated slug.
@@ -935,6 +971,9 @@ export async function middleware(request) {
           /<link\s+rel=["']canonical["']\s+href=["']https?:\/\/[^"']*?(?:\/)?["']\s*\/?>/i,
           `<link rel="canonical" href="${canonicalUrl}"/>`
         );
+
+        // Fix internal links that point at redirecting URLs (trailing slash + legacy)
+        html = fixInternalRedirectLinks(html);
 
         // LLM Visibility Phase 1: inject a FAQPage schema on the 3 main
         // service pages (Pulse, Teach You, Done With You). LLMs (ChatGPT,
