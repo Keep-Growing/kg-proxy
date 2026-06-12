@@ -43,8 +43,29 @@ function rewriteBody(text) {
     text
       .replace(/https?:\/\/blog-conseils-strategie-croissance\.ghost\.io/g, PUBLIC_BASE)
       .replace(/blog-conseils-strategie-croissance\.ghost\.io/g, `${PUBLIC_HOST}${BLOG_PATH}`)
+      // Dead Calendly CTAs: calendly.com/keep-growing(+variants) returns 404
+      // since the account was closed (audit 114515 "Has External Broken
+      // Links" — 7 articles). Route the booking intent to the internal
+      // /rendezvous/ page instead.
+      .replace(/https?:\/\/calendly\.com\/keep-growing[^"'\s<)]*/g, `https://${PUBLIC_HOST}/rendezvous/`)
   );
 }
+
+// Near-duplicate article pairs (audit 114515 "Non Unique Content", 10 pairs).
+// SEO consolidation without deleting content: the weaker page declares the
+// stronger one as canonical. Keys/values are ghostPath (post-BLOG_PATH).
+const DUPLICATE_CANONICALS = {
+  '/esprit-d-equipe-collaboration-solidarite/': '/le-leadership-de-lequipe-commerciale-facteur-humain-au/',
+  '/conversations-executives-seduire-grands-comptes/': '/executive-conversation-pitch-dirigeant/',
+  '/la-peur-de-closer-comment-surmonter-crainte-conclure-vente/': '/peur-de-conclure-crainte-de-vendre/',
+  '/cle-de-la-reussite-en-vente-surmonter-peur-du-rejet/': '/cle-reussite-vente-techniques-strategies/',
+  '/monter-reseau-partenaires-performant/': '/strategie-reseau-partenaires-b2b/',
+  '/quelles-sont-les-composantes-dune-bonne-formation-a-la/': '/formation-vente-competences-commerciales/',
+  '/lagenda-du-dirigeant-de-startup-naviguer-entre-le-les/': '/maitriser-leadership-startup/',
+  '/mesurer-lefficacite-du-funnel-de-vente-a-travers-des-kpis/': '/indicateurs-cles-vente-kpis-strategie-commerciale/',
+  '/boostez-votre-equipe-commerciale-avec-des-rituels-danimation/': '/efficacite-commerciale-cohesion-equipes/',
+  '/optimiser-force-commerciale-performance-durable/': '/pme-eti-la-transformation-digitale-de-votre-force/',
+};
 
 // Decode HTML entities INSIDE JSON-LD <script> blocks + clean schema bugs:
 // - Ghost emits "d&#x27;une" inside Article schema → decode entities
@@ -552,6 +573,10 @@ function cleanSchemaObject(obj, parentType = null) {
       }
       // Strip null fields entirely (schema.org rejects nulls)
       if (v === null) continue;
+      // Strip empty-string fields (Squarespace emits description:"" on its
+      // native WebSite block — validators flag empty values; audit 114515
+      // "JSON LD Schema" × 238 pages)
+      if (typeof v === 'string' && v.trim() === '' && k !== '@id') continue;
       // Strip empty placeholder objects like { "@type": "Review" } (Squarespace stubs)
       if (v && typeof v === 'object' && !Array.isArray(v)) {
         const keys = Object.keys(v);
@@ -561,7 +586,10 @@ function cleanSchemaObject(obj, parentType = null) {
       let cleaned = cleanSchemaObject(v, type);
       // Make URL fields absolute (handle keys 'url', 'item', 'image', 'sameAs', 'logo')
       if ((k === 'url' || k === 'item' || k === 'image' || k === 'logo') && typeof cleaned === 'string') {
-        if (cleaned.startsWith('/') && !cleaned.startsWith('//')) {
+        if (cleaned.startsWith('//')) {
+          // Protocol-relative (Squarespace native WebSite block) → force https
+          cleaned = `https:${cleaned}`;
+        } else if (cleaned.startsWith('/')) {
           cleaned = `https://${PUBLIC_HOST}${cleaned}`;
         }
       }
@@ -710,6 +738,16 @@ function rewriteHtml(html, pathname, ghostPath) {
   // Fix internal links that point at redirecting URLs (trailing slash + legacy)
   out = fixInternalRedirectLinks(out);
 
+  // Near-duplicate consolidation: point the weaker article's canonical at the
+  // stronger one (see DUPLICATE_CANONICALS).
+  if (ghostPath && DUPLICATE_CANONICALS[ghostPath]) {
+    const canonicalTarget = `https://${PUBLIC_HOST}${BLOG_PATH}${DUPLICATE_CANONICALS[ghostPath]}`;
+    out = out.replace(
+      /<link\s+rel=["']canonical["']\s+href=["'][^"']*["']\s*\/?>/i,
+      `<link rel="canonical" href="${canonicalTarget}"/>`
+    );
+  }
+
   // Noindex tag/author archive pages. These are thin, duplicate-content listing
   // pages (Ghost auto-generated) that GSC/OTTO flag as "non unique content" +
   // "non unique title". Standard SEO practice: keep them crawlable (follow) so
@@ -767,6 +805,12 @@ const LEGACY_REDIRECTS = {
   // /home and /home/ are Squarespace duplicate of /, must 301 to root
   '/home': '/',
   '/home/': '/',
+  // /nos-ressources currently chains 3 redirects to the blog index, and 272
+  // internal links across the site still point at it (audit 114515).
+  // Direct mapping + fixInternalRedirectLinks rewrites those links in place.
+  '/nos-ressources': '/blog-conseils-strategie-croissance/',
+  // Duplicate Squarespace page of the white paper (canonical mismatch in audit)
+  '/les-100-premiers-jours-du-directeur-commercial-1': '/les-100-premiers-jours-du-directeur-commercial/',
   '/nos-solutions': '/pulse-audit-commercial/',
   '/nos-accompagnements': '/done-with-you/',
   '/articles-linkedin': '/articles-linkedin-dirigeant-commercial/',
@@ -1013,6 +1057,16 @@ export async function middleware(request) {
           );
         }
 
+        // Duplicate H1 differentiation (audit 114515 "Non Unique H1", 2 pairs).
+        // Squarespace reuses the same H1 across page pairs; rewrite one of
+        // each pair server-side so every page has a unique H1.
+        if (pathname === '/videos-dirigeants-commercial/') {
+          html = html.replace(/(<h1[^>]*>)[\s\S]*?(<\/h1>)/, '$1Vidéos pour dirigeants et commerciaux B2B$2');
+        }
+        if (pathname === '/atelier-disc-leadership/') {
+          html = html.replace(/(<h1[^>]*>)[\s\S]*?(<\/h1>)/, '$1Atelier DISC Leadership : décryptez les profils comportementaux$2');
+        }
+
         // VideoObject ItemList on the videos page (audit gap fix)
         if (pathname === '/videos-dirigeants-commercial/' && !html.includes('"@type":"VideoObject"') && !html.includes("'@type': 'VideoObject'")) {
           html = html.replace('</head>', `<script type="application/ld+json">${JSON.stringify(VIDEOS_PAGE_SCHEMA)}</script>\n</head>`);
@@ -1134,6 +1188,10 @@ export const config = {
     '/done-with-you-1/',
     '/diagnostic-commercial',
     '/diagnostic-commercial/',
+    '/nos-ressources',
+    '/nos-ressources/',
+    '/les-100-premiers-jours-du-directeur-commercial-1',
+    '/les-100-premiers-jours-du-directeur-commercial-1/',
     // Apex pages with Squarespace schema cleanup needed (cf. APEX_SCHEMA_PAGES)
     '/',
     '/contact/',
