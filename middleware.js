@@ -45,9 +45,9 @@ function rewriteBody(text) {
       .replace(/blog-conseils-strategie-croissance\.ghost\.io/g, `${PUBLIC_HOST}${BLOG_PATH}`)
       // Dead Calendly CTAs: calendly.com/keep-growing(+variants) returns 404
       // since the account was closed (audit 114515 "Has External Broken
-      // Links" — 7 articles). Route the booking intent to the internal
-      // /rendezvous/ page instead.
-      .replace(/https?:\/\/calendly\.com\/keep-growing[^"'\s<)]*/g, `https://${PUBLIC_HOST}/rendezvous/`)
+      // Links" — 7 articles). KG now books via lemcal — route directly to
+      // David's live booking page (validated 200).
+      .replace(/https?:\/\/calendly\.com\/keep-growing[^"'\s<)]*/g, 'https://app.lemcal.com/@david-zaoui/45')
   );
 }
 
