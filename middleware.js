@@ -699,15 +699,45 @@ function buildBreadcrumbJsonLd(pathname, html) {
   return `<script type="application/ld+json">${JSON.stringify(breadcrumb)}</script>`;
 }
 
+// Generate a complete, consistent Twitter Card meta set from the page's
+// existing Open Graph tags. X/LinkedIn fall back to OG anyway, but Search
+// Atlas audits twitter:* explicitly — deriving them from OG satisfies the
+// audit AND keeps a single source of truth. twitter:site is intentionally
+// omitted (Keep Growing has no X account; an empty handle would be invalid).
+function deriveTwitterFromOg(html) {
+  const og = (prop) => {
+    const m = html.match(new RegExp(`<meta\\s+(?:property|name)="og:${prop}"\\s+content="([^"]*)"`, 'i'));
+    return m ? m[1] : null;
+  };
+  const title = og('title');
+  const desc = og('description');
+  const image = og('image');
+  if (!title && !image) return html; // no OG to derive from
+  const esc = (s) => (s || '').replace(/"/g, '&quot;');
+  let tags = '<meta name="twitter:card" content="summary_large_image"/>';
+  if (title) tags += `\n<meta name="twitter:title" content="${esc(title)}"/>`;
+  if (desc) {
+    // Search Atlas flags twitter:description > 125 chars. Truncate on a word
+    // boundary to clear the flag while staying readable.
+    const short = desc.length > 125 ? desc.slice(0, 124).replace(/\s+\S*$/, '') + '…' : desc;
+    tags += `\n<meta name="twitter:description" content="${esc(short)}"/>`;
+  }
+  if (image) tags += `\n<meta name="twitter:image" content="${esc(image)}"/>`;
+  return html.replace('</head>', `${tags}\n</head>`);
+}
+
 function rewriteHtml(html, pathname, ghostPath) {
   let out = rewriteBody(html)
     .replace(/(href|src|action|content|data-src|data-href)="\/(?!\/)/g, `$1="${BLOG_PATH}/`)
     .replace(/(srcset)="\/(?!\/)/g, `$1="${BLOG_PATH}/`)
     // Replace Ghost default publication-cover.jpg with Keep Growing brand image
     .replace(/https:\/\/static\.ghost\.org\/v\d+\.\d+\.\d+\/images\/publication-cover\.jpg/g, KG_OG_FALLBACK)
-    // Strip Twitter Card meta tags (no Twitter account; OG covers LinkedIn/Slack/WhatsApp)
+    // Remove existing Twitter tags — they are regenerated from OG below so the
+    // set is complete & consistent (audit 114515 flagged 100s of Ghost pages
+    // for missing twitter:card/title/description/image when they were stripped).
     .replace(/\s*<meta\s+(?:name|property)="twitter:[^"]*"[^>]*\/?>\s*/gi, '');
 
+  out = deriveTwitterFromOg(out);
   out = truncateMeta(out);
 
   // Decode HTML entities inside JSON-LD blocks — Schema.org validators reject
