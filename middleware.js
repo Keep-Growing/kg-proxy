@@ -768,6 +768,15 @@ function rewriteHtml(html, pathname, ghostPath) {
 }
 
 function addTrailingSlashesToSitemap(xml) {
+  // Inject the homepage if Squarespace omitted it. Squarespace exports /home
+  // (the page) but not the root /, so the most important URL is missing from
+  // the sitemap (audit 114515 "Page Not In Sitemap"). Add it right after the
+  // opening <urlset> tag, and drop any /home or /home/ entry (it 301s to /).
+  if (!/<loc>https:\/\/keepgrowing\.fr\/?<\/loc>/.test(xml)) {
+    xml = xml.replace(/(<urlset[^>]*>)/i, `$1<url><loc>https://${PUBLIC_HOST}/</loc><priority>1.0</priority></url>`);
+  }
+  xml = xml.replace(/<url>(?:(?!<\/url>).)*<loc>https:\/\/keepgrowing\.fr\/home\/?<\/loc>(?:(?!<\/url>).)*<\/url>/gs, '');
+
   return xml.replace(/<loc>(https?:\/\/[^<]+)<\/loc>/g, (match, url) => {
     try {
       const u = new URL(url);
@@ -969,16 +978,13 @@ export async function middleware(request) {
     <loc>https://${PUBLIC_HOST}${BLOG_PATH}/sitemap-posts.xml</loc>
     <lastmod>${now}</lastmod>
   </sitemap>
-  <sitemap>
-    <loc>https://${PUBLIC_HOST}${BLOG_PATH}/sitemap-authors.xml</loc>
-    <lastmod>${now}</lastmod>
-  </sitemap>
-  <sitemap>
-    <loc>https://${PUBLIC_HOST}${BLOG_PATH}/sitemap-tags.xml</loc>
-    <lastmod>${now}</lastmod>
-  </sitemap>
 </sitemapindex>
 `;
+  // Ghost sitemap-authors.xml and sitemap-tags.xml are intentionally EXCLUDED
+  // from the index: those archive pages are served robots noindex,follow
+  // (thin/duplicate), so listing them in a sitemap is a contradictory signal
+  // that Search Atlas/Google flag ("Page Not Absent From Sitemap", 73 URLs,
+  // audit 114515). Posts + pages + Squarespace cover every indexable URL.
     return new NextResponse(indexXml, {
       status: 200,
       headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=3600, s-maxage=3600' }
