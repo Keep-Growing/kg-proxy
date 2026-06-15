@@ -611,11 +611,22 @@ function cleanSchemaObject(obj, parentType = null) {
       if ('telephone' in out) delete out.telephone;
     }
 
-    // Inject real reviews + aggregateRating for Product/Service schemas where:
+    // Google review-snippet rules (GSC Rich Results FAIL, 2026-06-15):
+    // review/aggregateRating are ONLY valid on a supported type (Product etc.).
+    // On `Service` Google raises a hard ERROR ("Type d'objet non valide pour le
+    // champ parent_node"); on Organization/LocalBusiness self-serving reviews
+    // are silently ignored. So: inject reviews ONLY into Product, and strip any
+    // review/aggregateRating that OTTO/Squarespace put on Service/Org/LocalBusiness.
+    if (type === 'Service' || type === 'Organization' || type === 'LocalBusiness') {
+      delete out.review;
+      delete out.reviews;
+      delete out.aggregateRating;
+    }
+    // Inject real reviews + aggregateRating for Product schemas where:
     // (a) Squarespace emitted null sentinels (review: null, aggregateRating: null)
     // (b) Schema has offers but NO review field at all (Squarespace removed even the nulls)
     // (c) aggregateRating.reviewCount > listed reviews.length (mismatch)
-    const isReviewable = type === 'Product' || type === 'Service' || type === 'LocalBusiness';
+    const isReviewable = type === 'Product';
     if (isReviewable) {
       const { reviews, aggregate } = buildReviewBlock();
       // Marker that this is a real commercial offering: has offers OR price OR brand
