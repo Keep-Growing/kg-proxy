@@ -1119,6 +1119,33 @@ export async function middleware(request) {
           html = html.replace('</head>', `<script type="application/ld+json">${JSON.stringify(VIDEOS_PAGE_SCHEMA)}</script>\n</head>`);
         }
 
+        // /done-for-you/ only carried a Service schema → review stars were
+        // invalid (Service unsupported). Inject a Product schema (the offering
+        // is productized, like Done With You) so the 12 reviews + 5/5 rating
+        // attach to a Google-supported type and display valid stars.
+        if (pathname === '/done-for-you/' && !html.includes('"@type":"Product"')) {
+          const { reviews, aggregate } = buildReviewBlock();
+          const dfyProduct = {
+            '@context': 'https://schema.org',
+            '@type': 'Product',
+            '@id': 'https://keepgrowing.fr/done-for-you/#product',
+            'name': 'Direction Commerciale Externalisée — Done For You',
+            'brand': { '@type': 'Brand', 'name': 'Keep Growing' },
+            'description': "Direction commerciale externalisée par d'anciens dirigeants (Apple, Intel, Nortel) : exécution opérationnelle de votre transformation commerciale B2B, de la structuration de l'équipe au pilotage des résultats. Powered by AI. Trained by Pros.",
+            'url': 'https://keepgrowing.fr/done-for-you/',
+            'offers': {
+              '@type': 'AggregateOffer',
+              'priceCurrency': 'EUR',
+              'lowPrice': '40000',
+              'highPrice': '250000',
+              'availability': 'https://schema.org/InStock'
+            },
+            'review': reviews,
+            'aggregateRating': aggregate
+          };
+          html = html.replace('</head>', `<script type="application/ld+json">${JSON.stringify(dfyProduct)}</script>\n</head>`);
+        }
+
         // Conversion-page guard: OTTO's "missing headings" autopilot injects
         // large AI-generated H2+paragraph blocks client-side. On conversion
         // pages (contact, rendezvous, thank-you) that violates the
