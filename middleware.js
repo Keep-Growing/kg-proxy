@@ -81,6 +81,18 @@ function decodeJsonLdEntities(html) {
         .replace(/&#x27;/g, "'")
         .replace(/&#39;/g, "'")
         .replace(/&apos;/g, "'")
+        // &quot; inside a JSON string must become an ESCAPED quote (\") — a bare
+        // " would break the JSON. Ghost emits &quot; whenever a title/description
+        // contains quotation marks (e.g. Transformer le &quot;Pourquoi&quot;).
+        // OTTO flags these as "Schema contains HTML entities". (GSC audit 2026-06-18)
+        .replace(/&quot;/g, '\\"')
+        .replace(/&rsquo;/g, '’')
+        .replace(/&lsquo;/g, '‘')
+        .replace(/&ldquo;/g, '“')
+        .replace(/&rdquo;/g, '”')
+        .replace(/&hellip;/g, '…')
+        .replace(/&mdash;/g, '—')
+        .replace(/&ndash;/g, '–')
         .replace(/&lt;/g, '<')
         .replace(/&gt;/g, '>')
         .replace(/&nbsp;/g, ' ')
