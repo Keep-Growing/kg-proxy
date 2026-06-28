@@ -681,6 +681,64 @@ function truncateMeta(html) {
     );
 }
 
+// CTR optimization — per-URL <title>/meta overrides. This replaces OTTO's
+// meta-rewriting job (zero Search Atlas credits): all overrides live here,
+// version-controlled and reversible. Targets are high-impression / low-CTR
+// pages from GSC (2026-06-29): position is page-1 but the snippet under-sells.
+// Keyed on the public pathname (trailing-slash tolerant).
+const META_OVERRIDES = {
+  '/blog-conseils-strategie-croissance/comprendre-le-bmc-les-4-piliers-incontournables/': {
+    title: 'BMC : signification et 4 piliers du Business Model Canvas',
+    description: "Le Business Model Canvas en clair : à quoi servent ses 4 piliers, comment les remplir, et l'erreur qui fausse votre diagnostic commercial.",
+  },
+  '/blog-conseils-strategie-croissance/conseils-pour-un-onboarding-commercial-reussi/': {
+    title: "Réussir l'onboarding commercial : la méthode en 5 étapes",
+    // Was an English description ("Accelerate sales reps'... Download now!") on a
+    // French page — a CTR killer. Replaced with intent-matched French copy.
+    description: "Comment intégrer un commercial pour qu'il performe vite ? La méthode d'onboarding en 5 étapes qui accélère la montée en compétence.",
+  },
+  '/teach-you/': {
+    title: 'Formations commerciales B2B Qualiopi, financées OPCO',
+    description: "Formez vos équipes commerciales avec d'anciens directeurs commerciaux (Apple, Intel). Certifié Qualiopi, finançable OPCO. Présentiel partout en France.",
+  },
+  '/pulse-audit-commercial/': {
+    title: 'Diagnostic commercial Pulse 360° en 4 semaines',
+    description: "Révélez les angles morts de votre organisation en 4 semaines. Plan d'action 90 jours inclus. Powered by AI. Trained by Pros.",
+  },
+  '/done-with-you/': {
+    title: 'Mentoring commercial : un ancien CSO exécute votre plan',
+    description: "Un ancien CSO à vos côtés pour exécuter votre plan de transformation commerciale. Résultats mesurés dès 90 jours.",
+  },
+};
+
+// Replace a meta tag's content by property/name key, both attribute orders.
+// Tag absent → returned unchanged (never injected, to avoid duplicates).
+function setMetaContent(html, key, value) {
+  const reA = new RegExp(`(<meta\\s+(?:property|name)=["']${key}["']\\s+content=["'])[^"']*(["'])`, 'i');
+  if (reA.test(html)) return html.replace(reA, (m, p1, p2) => p1 + value + p2);
+  const reB = new RegExp(`(<meta\\s+content=["'])[^"']*(["']\\s+(?:property|name)=["']${key}["'])`, 'i');
+  if (reB.test(html)) return html.replace(reB, (m, p1, p2) => p1 + value + p2);
+  return html;
+}
+
+function applyMetaOverrides(html, pathname) {
+  const o = META_OVERRIDES[pathname]
+    || META_OVERRIDES[pathname.endsWith('/') ? pathname.slice(0, -1) : pathname + '/'];
+  if (!o) return html;
+  const attr = (s) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const text = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  let out = html;
+  if (o.title) {
+    out = out.replace(/<title>[\s\S]*?<\/title>/i, () => `<title>${text(o.title)}</title>`);
+    out = setMetaContent(out, 'og:title', attr(o.title));
+  }
+  if (o.description) {
+    out = setMetaContent(out, 'description', attr(o.description));
+    out = setMetaContent(out, 'og:description', attr(o.description));
+  }
+  return out;
+}
+
 // Decode HTML entities found in scraped HTML text (used for breadcrumb name)
 function decodeHtmlEntities(s) {
   return s
@@ -759,6 +817,10 @@ function rewriteHtml(html, pathname, ghostPath) {
     // set is complete & consistent (audit 114515 flagged 100s of Ghost pages
     // for missing twitter:card/title/description/image when they were stripped).
     .replace(/\s*<meta\s+(?:name|property)="twitter:[^"]*"[^>]*\/?>\s*/gi, '');
+
+  // CTR override (title + meta description + og) BEFORE deriving Twitter cards,
+  // so the cards inherit the new title/description.
+  out = applyMetaOverrides(out, pathname);
 
   out = deriveTwitterFromOg(out);
   out = truncateMeta(out);
@@ -1093,6 +1155,10 @@ export async function middleware(request) {
           /<link\s+rel=["']canonical["']\s+href=["']https?:\/\/[^"']*?(?:\/)?["']\s*\/?>/i,
           `<link rel="canonical" href="${canonicalUrl}"/>`
         );
+
+        // CTR override — rewrite <title>/meta description on high-impression,
+        // low-CTR Squarespace pages (see META_OVERRIDES).
+        html = applyMetaOverrides(html, pathname);
 
         // Fix internal links that point at redirecting URLs (trailing slash + legacy)
         html = fixInternalRedirectLinks(html);
