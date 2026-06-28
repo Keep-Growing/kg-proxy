@@ -713,14 +713,17 @@ const META_OVERRIDES = {
   },
 };
 
-// Replace a meta tag's content by property/name key, both attribute orders.
-// Tag absent → returned unchanged (never injected, to avoid duplicates).
+// Replace meta tags' content by property/name/itemprop key. Replaces ALL
+// matches (Squarespace emits both name= and itemprop= "description"), both
+// attribute orders. Content is assumed double-quoted (Ghost + Squarespace
+// standard); [^"]* therefore tolerates apostrophes inside the value
+// (e.g. "sales reps' skills"). `value` must already be attribute-escaped.
 function setMetaContent(html, key, value) {
-  const reA = new RegExp(`(<meta\\s+(?:property|name)=["']${key}["']\\s+content=["'])[^"']*(["'])`, 'i');
-  if (reA.test(html)) return html.replace(reA, (m, p1, p2) => p1 + value + p2);
-  const reB = new RegExp(`(<meta\\s+content=["'])[^"']*(["']\\s+(?:property|name)=["']${key}["'])`, 'i');
-  if (reB.test(html)) return html.replace(reB, (m, p1, p2) => p1 + value + p2);
-  return html;
+  const reA = new RegExp(`(<meta\\s+(?:property|name|itemprop)="${key}"\\s+content=")[^"]*(")`, 'gi');
+  const reB = new RegExp(`(<meta\\s+content=")[^"]*("\\s+(?:property|name|itemprop)="${key}")`, 'gi');
+  return html
+    .replace(reA, (m, p1, p2) => p1 + value + p2)
+    .replace(reB, (m, p1, p2) => p1 + value + p2);
 }
 
 function applyMetaOverrides(html, pathname) {
@@ -733,10 +736,19 @@ function applyMetaOverrides(html, pathname) {
   if (o.title) {
     out = out.replace(/<title>[\s\S]*?<\/title>/i, () => `<title>${text(o.title)}</title>`);
     out = setMetaContent(out, 'og:title', attr(o.title));
+    // Apex/Squarespace pages keep their own twitter tags (deriveTwitterFromOg
+    // only runs in the Ghost pipeline). On Ghost these are already stripped, so
+    // this is a no-op there and the cards are rebuilt from the new og: tags.
+    out = setMetaContent(out, 'twitter:title', attr(o.title));
   }
   if (o.description) {
     out = setMetaContent(out, 'description', attr(o.description));
     out = setMetaContent(out, 'og:description', attr(o.description));
+    // Search Atlas flags twitter:description > 125 chars.
+    const tw = o.description.length > 125
+      ? o.description.slice(0, 124).replace(/\s+\S*$/, '') + '…'
+      : o.description;
+    out = setMetaContent(out, 'twitter:description', attr(tw));
   }
   return out;
 }
