@@ -691,11 +691,13 @@ const META_OVERRIDES = {
     title: 'BMC : signification et 4 piliers du Business Model Canvas',
     description: "Le Business Model Canvas en clair : à quoi servent ses 4 piliers, comment les remplir, et l'erreur qui fausse votre diagnostic commercial.",
   },
-  '/blog-conseils-strategie-croissance/conseils-pour-un-onboarding-commercial-reussi/': {
-    title: "Réussir l'onboarding commercial : la méthode en 5 étapes",
-    // Was an English description ("Accelerate sales reps'... Download now!") on a
-    // French page — a CTR killer. Replaced with intent-matched French copy.
-    description: "Comment intégrer un commercial pour qu'il performe vite ? La méthode d'onboarding en 5 étapes qui accélère la montée en compétence.",
+  // NB: the blog article /conseils-pour-un-onboarding-commercial-reussi/ 301s
+  // to this whitepaper page (LEGACY_REDIRECTS), so the override must live on the
+  // destination. The Squarespace page carried an English description
+  // ("Accelerate sales reps'... Download now!") on a French URL — a CTR killer.
+  '/livre-blanc-lonboarding-efficace-des-commerciaux/': {
+    title: "Onboarding commercial réussi : le guide en 5 étapes",
+    description: "Le guide pour intégrer vos commerciaux et les rendre performants vite : la méthode d'onboarding en 5 étapes, par d'anciens directeurs commerciaux.",
   },
   '/teach-you/': {
     title: 'Formations commerciales B2B Qualiopi, financées OPCO',
