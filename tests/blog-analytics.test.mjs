@@ -38,3 +38,11 @@ test('injection is idempotent and preserves upstream measurement', () => {
   assert.equal(injectBlogAnalytics(html + 'G-CL8FNXBBD8'), html + 'G-CL8FNXBBD8');
   assert.ok(out.includes('<title>Test</title>')); assert.ok(out.includes('<body>Article</body>'));
 });
+test('vercel insights injected once before </body>', async () => {
+  const { injectVercelInsights } = await import('../lib/blog-analytics.mjs');
+  const html = '<html><head></head><body><p>x</p></body></html>';
+  const out = injectVercelInsights(html);
+  assert.ok(out.includes('<script defer src="/_vercel/insights/script.js"></script><script defer src="/_vercel/speed-insights/script.js"></script></body>'));
+  assert.equal(injectVercelInsights(out), out);
+  assert.equal(injectVercelInsights('{"not":"html"}'), '{"not":"html"}');
+});

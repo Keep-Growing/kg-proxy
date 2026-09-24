@@ -1,6 +1,6 @@
 import { refineBlogDesign, addPulseCta } from './lib/blog-design.mjs';
 import { fixBlogIndexHeading, removeRetiredSitemapUrls } from './lib/blog-seo.mjs';
-import { injectBlogAnalytics } from './lib/blog-analytics.mjs';
+import { injectBlogAnalytics, injectVercelInsights } from './lib/blog-analytics.mjs';
 // Liste des articles publies, source du sitemap-posts.xml genere ici
 // (cf. commentaire au niveau de la route). A REGENERER A CHAQUE PUBLICATION.
 import BLOG_POSTS from './lib/blog-posts.json' assert { type: 'json' };
@@ -1337,7 +1337,7 @@ ${entries.map((p) => `  <url>
         // CDN cache: 5 min fresh, 10 min stale-while-revalidate. Browsers get must-revalidate.
         'Cache-Control': 'public, max-age=0, must-revalidate, s-maxage=300, stale-while-revalidate=600',
       };
-      return new NextResponse(injectBlogAnalytics(rewriteHtml(await res.text(), pathname, ghostPath)), {
+      return new NextResponse(injectVercelInsights(injectBlogAnalytics(rewriteHtml(await res.text(), pathname, ghostPath))), {
         status: res.status,
         headers
       });
