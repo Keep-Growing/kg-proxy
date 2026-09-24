@@ -1246,7 +1246,10 @@ ${entries.map((p) => `  <url>
         }
 
         // VideoObject ItemList on the videos page (audit gap fix)
-        if (pathname === '/videos-dirigeants-commercial/' && !html.includes('"@type":"VideoObject"') && !html.includes("'@type': 'VideoObject'")) {
+        // Desactive le 24/09/2026 : chaque video a desormais sa propre page
+        // (/videos-dirigeants-commercial/<slug>/) avec son VideoObject. La galerie
+        // ne doit plus porter de VideoObject (Google n'indexe une video que sur sa page).
+        if (false && pathname === '/videos-dirigeants-commercial/' && !html.includes('"@type":"VideoObject"') && !html.includes("'@type': 'VideoObject'")) {
           html = html.replace('</head>', `<script type="application/ld+json">${JSON.stringify(VIDEOS_PAGE_SCHEMA)}</script>\n</head>`);
         }
 
