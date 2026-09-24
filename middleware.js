@@ -234,7 +234,7 @@ const FAQ_PULSE_AUDIT = {
       'name': "Qu'est-ce que Pulse 360° exactement ?",
       'acceptedAnswer': {
         '@type': 'Answer',
-        'text': "Pulse 360° est un diagnostic commercial complet qui analyse votre organisation selon 4 dimensions (vision, talents, process, environnement). Contrairement à un audit classique qui prend 3 mois, Pulse délivre un diagnostic actionnable en 4 semaines, avec un séminaire d'alignement inclus.",
+        'text': "Pulse 360° est un diagnostic commercial qui analyse ton organisation sur 4 dimensions : Vision, Collaborateurs, Fonctionnement et Confiance. Il croise tes données (CRM, indicateurs) avec la perception de chaque niveau de l'équipe (questionnaires anonymes, entretiens avec 20 à 30 % des commerciaux et tous les managers et directeurs). Il dure 4 à 6 semaines et se conclut par un séminaire d'alignement et un plan d'action à 30, 60 et 90 jours.",
       },
     },
     {
@@ -242,7 +242,7 @@ const FAQ_PULSE_AUDIT = {
       'name': 'Combien de temps dure un diagnostic Pulse ?',
       'acceptedAnswer': {
         '@type': 'Answer',
-        'text': "4 semaines pour les équipes jusqu'à 50 commerciaux. 4 à 6 semaines pour les ETI multi-sites. La charge est limitée pour vos équipes : questionnaire de 15-20 min en autonomie, entretiens de 45-60 min pour les personnes sélectionnées, 2h de cadrage + ½ journée de séminaire pour la Direction.",
+        'text': "4 à 6 semaines selon la taille de l'équipe et le nombre de sites. La charge est limitée pour vos équipes : questionnaire de 15-20 min en autonomie, entretiens de 45-60 min pour les personnes sélectionnées, 2h de cadrage + ½ journée de séminaire pour la Direction.",
       },
     },
     {
@@ -266,7 +266,7 @@ const FAQ_PULSE_AUDIT = {
       'name': 'Quelles sont les différentes offres Pulse ?',
       'acceptedAnswer': {
         '@type': 'Answer',
-        'text': "Pulse Express — Gratuit, pour équipes ≤10 (questionnaire IA, score instantané, benchmark, debrief 1h). Pulse Startup/PME — À partir de 12K€, équipes 10+, diagnostic complet 4 semaines, 8 entretiens, 3 quick wins, séminaire ½ journée, roadmap 12 mois. Pulse ETI/Multi-pays — À partir de 25K€, multi-sites, 12-20 entretiens, benchmark inter-sites, séminaire CODIR, roadmap 18 mois. Pulse for PE — Sur mesure pour fonds, 4 modules (pré-acquisition, post-closing, turnaround, exit).",
+        'text': "Pulse Express : gratuit, jusqu'à 5 commerciaux (questionnaire, score, recommandations, restitution d'une heure). Pulse Startup : à partir de 6 000 € HT, 5 à 10 commerciaux. Pulse Scaleup-PME : à partir de 12 000 € HT, 10 à 50 commerciaux, avec séminaire d'alignement d'une demi-journée. Pulse Entreprise : à partir de 25 000 € HT, 50 commerciaux et plus ou multi-sites, avec séminaire d'une journée en comité de direction. Pulse Fonds : sur mesure pour les fonds d'investissement.",
       },
     },
     {
@@ -717,8 +717,8 @@ const META_OVERRIDES = {
     description: "Formez vos équipes commerciales avec d'anciens directeurs commerciaux (Apple, Intel). Certifié Qualiopi, finançable OPCO. Présentiel partout en France.",
   },
   '/pulse-audit-commercial/': {
-    title: 'Diagnostic commercial Pulse 360° en 4 semaines',
-    description: "Révélez les angles morts de votre organisation en 4 semaines. Plan d'action 90 jours inclus. Powered by AI. Trained by Pros.",
+    title: 'Diagnostic commercial PME et ETI en 4 à 6 semaines | Pulse 360°',
+    description: "Diagnostic commercial pour PME et ETI en 4 à 6 semaines : questionnaires anonymes, entretiens, 4 dimensions et plan d'action à 90 jours. Version Express gratuite.",
   },
   '/done-with-you/': {
     title: 'Mentoring commercial : un ancien CSO exécute votre plan',
