@@ -1,6 +1,7 @@
 import { refineBlogDesign, addPulseCta } from './lib/blog-design.mjs';
 import { fixBlogIndexHeading, removeRetiredSitemapUrls } from './lib/blog-seo.mjs';
 import { injectBlogAnalytics, injectVercelInsights } from './lib/blog-analytics.mjs';
+import { BLOG_TITLES } from './lib/blog-titles.mjs';
 // Liste des articles publies, source du sitemap-posts.xml genere ici
 // (cf. commentaire au niveau de la route). A REGENERER A CHAQUE PUBLICATION.
 import BLOG_POSTS from './lib/blog-posts.json' assert { type: 'json' };
@@ -724,6 +725,12 @@ const META_OVERRIDES = {
     description: "Un ancien CSO à vos côtés pour exécuter votre plan de transformation commerciale. Résultats mesurés dès 90 jours.",
   },
 };
+
+// Titles complets des articles dont le title Ghost etait tronque (lib/blog-titles.mjs).
+// Une entree deja presente ci-dessus reste prioritaire.
+for (const [slug, title] of Object.entries(BLOG_TITLES)) {
+  META_OVERRIDES[`/blog-conseils-strategie-croissance/${slug}/`] ??= { title };
+}
 
 // Replace meta tags' content by property/name/itemprop key. Replaces ALL
 // matches (Squarespace emits both name= and itemprop= "description"), both
