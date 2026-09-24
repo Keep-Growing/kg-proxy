@@ -1,0 +1,32 @@
+{
+  "beforeConsent": 0,
+  "responses": [
+    {
+      "status": 204,
+      "event": "page_view",
+      "measurement": "G-CL8FNXBBD8",
+      "location": "https://keepgrowing.fr/blog-conseils-strategie-croissance/accords-tolteques-vente/"
+    }
+  ],
+  "commands": [
+    {
+      "0": "config",
+      "1": "G-CL8FNXBBD8",
+      "2": {
+        "send_page_view": false,
+        "content_group": "Blog",
+        "page_location": "https://keepgrowing.fr/blog-conseils-strategie-croissance/accords-tolteques-vente/",
+        "allow_google_signals": false,
+        "allow_ad_personalization_signals": false
+      }
+    },
+    {
+      "0": "event",
+      "1": "page_view",
+      "2": {
+        "send_to": "G-CL8FNXBBD8",
+        "debug_mode": true
+      }
+    }
+  ]
+}

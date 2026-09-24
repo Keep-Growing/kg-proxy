@@ -1,7 +1,16 @@
+import { refineBlogDesign, addPulseCta } from './lib/blog-design.mjs';
+import { fixBlogIndexHeading, removeRetiredSitemapUrls } from './lib/blog-seo.mjs';
+import { injectBlogAnalytics } from './lib/blog-analytics.mjs';
+// Liste des articles publies, source du sitemap-posts.xml genere ici
+// (cf. commentaire au niveau de la route). A REGENERER A CHAQUE PUBLICATION.
+import BLOG_POSTS from './lib/blog-posts.json' assert { type: 'json' };
 import { NextResponse } from 'next/server';
 
 const GHOST_HOST = 'blog-conseils-strategie-croissance.ghost.io';
 const SQUARESPACE_HOST = 'bamboo-celery-eayp.squarespace.com';
+// GO-LIVE 2026-08-19 : nouvelle origine du site (site statique Vercel). Remplace
+// Squarespace pour tout le hors-blog. Rollback : voir next.config.js + backup.
+const SITE_HOST = 'keepgrowing-preview.vercel.app';
 const BLOG_PATH = '/blog-conseils-strategie-croissance';
 const PUBLIC_HOST = 'keepgrowing.fr';
 const PUBLIC_BASE = `https://${PUBLIC_HOST}${BLOG_PATH}`;
@@ -64,7 +73,10 @@ const DUPLICATE_CANONICALS = {
   '/lagenda-du-dirigeant-de-startup-naviguer-entre-le-les/': '/maitriser-leadership-startup/',
   '/mesurer-lefficacite-du-funnel-de-vente-a-travers-des-kpis/': '/indicateurs-cles-vente-kpis-strategie-commerciale/',
   '/boostez-votre-equipe-commerciale-avec-des-rituels-danimation/': '/efficacite-commerciale-cohesion-equipes/',
-  '/optimiser-force-commerciale-performance-durable/': '/pme-eti-la-transformation-digitale-de-votre-force/',
+  // '/optimiser-force-commerciale-performance-durable/' retiré le 07/09/2026 :
+  // l'article a été entièrement réécrit (vision, stratégie, structure, culture,
+  // pilotage) et n'est plus un doublon de la transformation digitale. C'est le
+  // pilier du cluster management commercial, il doit être canonique de lui-même.
 };
 
 // Decode HTML entities INSIDE JSON-LD <script> blocks + clean schema bugs:
@@ -830,7 +842,13 @@ function rewriteHtml(html, pathname, ghostPath) {
     // Remove existing Twitter tags — they are regenerated from OG below so the
     // set is complete & consistent (audit 114515 flagged 100s of Ghost pages
     // for missing twitter:card/title/description/image when they were stripped).
-    .replace(/\s*<meta\s+(?:name|property)="twitter:[^"]*"[^>]*\/?>\s*/gi, '');
+    .replace(/\s*<meta\s+(?:name|property)="twitter:[^"]*"[^>]*\/?>\s*/gi, '')
+    // Ghost "outbound link tagging" ajoute ?ref=<publication> sur les liens
+    // sortants. Sur nos propres liens vers keepgrowing.fr, ça fabrique des URL
+    // dupliquées que Semrush remonte en conflit hreflang (audit 07/09/2026).
+    // On nettoie le paramètre côté proxy : les liens internes restent propres.
+    .replace(/(href="https:\/\/keepgrowing\.fr\/[^"]*?)\?ref=[^"&#]*(#[^"]*)?"/g, '$1$2"')
+    .replace(/(href="https:\/\/keepgrowing\.fr\/[^"]*?)&(?:amp;)?ref=[^"&#]*/g, '$1');
 
   // CTR override (title + meta description + og) BEFORE deriving Twitter cards,
   // so the cards inherit the new title/description.
@@ -893,7 +911,7 @@ function rewriteHtml(html, pathname, ghostPath) {
     }
   }
 
-  return out;
+  return addPulseCta(refineBlogDesign(fixBlogIndexHeading(out, ghostPath)));
 }
 
 function addTrailingSlashesToSitemap(xml) {
@@ -961,16 +979,7 @@ const LEGACY_REDIRECTS = {
   '/blog-conseils-strategie-croissance/dominer-marche-strategie-commerciale-ciblee': '/blog-conseils-strategie-croissance/',
   '/blog-conseils-strategie-croissance/collectif-commercial-attitudes-exemplaires-8a7a7': '/blog-conseils-strategie-croissance/collectif-commercial-attitudes-exemplaires/',
   '/blog-conseils-strategie-croissance/fondamentaux-processus-commerciaux-9cyj3': '/blog-conseils-strategie-croissance/fondamentaux-processus-commerciaux/',
-  '/blog-conseils-strategie-croissance/le-sales-business-coach-un-directeur-commercial-augmente': '/blog-conseils-strategie-croissance/',
   '/blog-conseils-strategie-croissance/back-basics': '/blog-conseils-strategie-croissance/fonction-commerciale-retour-fondamentaux/',
-  '/blog-conseils-strategie-croissance/meddic-la-cle-de-victoire-dans-les-ventes-b2b-complexes': '/livre-blanc-meddicc/',
-  '/blog-conseils-strategie-croissance/conseils-pour-un-onboarding-commercial-reussi': '/livre-blanc-lonboarding-efficace-des-commerciaux/',
-  '/blog-conseils-strategie-croissance/prise-de-fonction-en-tant-que-directeur-commercial-les-100-premiers-jours': '/les-100-premiers-jours-du-directeur-commercial/',
-  '/blog-conseils-strategie-croissance/maitriser-lart-de-la-prospection-en-b2b': '/blog-conseils-strategie-croissance/prospection-les-cles-dune-approche-gagnante/',
-  '/blog-conseils-strategie-croissance/maitriser-lart-du-pitch-trois-scenarios-pratiques': '/blog-conseils-strategie-croissance/executive-conversation-pitch-dirigeant/',
-  '/blog-conseils-strategie-croissance/assurer-le-suivi-des-clients-cles-pour-fideliser-la-relation-en-b2b': '/livre-blanc-gestion-de-grands-comptes/',
-  '/blog-conseils-strategie-croissance/pivoter-avec-precision-lart-de-la-reorientation-en-startup': '/blog-conseils-strategie-croissance/',
-  '/blog-conseils-strategie-croissance/seminaire-de-fin-dannee-loccasion-reflechir-et-dinnover': '/blog-conseils-strategie-croissance/',
   // Old category URLs (Squarespace had categories; Ghost uses tags)
   '/blog-conseils-strategie-croissance/category/Management-Leadership': '/blog-conseils-strategie-croissance/tag/leadership/',
   '/blog-conseils-strategie-croissance/category/Transformation-commerciale': '/blog-conseils-strategie-croissance/tag/management-commercial/',
@@ -1075,9 +1084,9 @@ export async function middleware(request) {
   // Squarespace-only sitemap (legacy URL — kept for direct access).
   if (pathname === '/sitemap-squarespace.xml' || pathname === '/sitemap-squarespace.xml/') {
     try {
-      const res = await fetch(`https://${SQUARESPACE_HOST}/sitemap.xml`, { redirect: 'follow' });
+      const res = await fetch(`https://${SITE_HOST}/sitemap.xml`, { redirect: 'follow' });
       const xml = await res.text();
-      return new NextResponse(addTrailingSlashesToSitemap(xml), {
+      return new NextResponse(xml, {
         status: res.status,
         headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=3600, s-maxage=3600' }
       });
@@ -1086,26 +1095,49 @@ export async function middleware(request) {
     }
   }
 
+  // sitemap-posts.xml du blog : genere ICI, plus proxifie depuis Ghost.
+  //
+  // Pourquoi : depuis que chaque article porte un canonical_url vers
+  // keepgrowing.fr (pose le 12/09/2026 pour tuer le doublon ghost.io), Ghost
+  // exclut volontairement ces articles de son sitemap. Le sitemap etant vide,
+  // Ghost a purement et simplement supprime sitemap-posts.xml : l'URL renvoyait
+  // 404 et notre index de sitemaps pointait dans le vide (constate 13/09/2026).
+  // On reprend donc la main : la liste vit dans lib/blog-posts.json, a
+  // regenerer a chaque publication.
+  if (pathname === `${BLOG_PATH}/sitemap-posts.xml`) {
+    const entries = BLOG_POSTS
+      .filter((p) => !DUPLICATE_CANONICALS[`/${p.slug}/`])   // doublons consolides
+      .filter((p) => !/^(about|back-basics)$/.test(p.slug));       // pages retirees
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${entries.map((p) => `  <url>
+    <loc>https://${PUBLIC_HOST}${BLOG_PATH}/${p.slug}/</loc>
+    <lastmod>${p.lastmod}</lastmod>
+  </url>`).join('\n')}
+</urlset>
+`;
+    return new NextResponse(xml, {
+      status: 200,
+      headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=3600, s-maxage=3600' }
+    });
+  }
+
   // /sitemap.xml — return a sitemap INDEX that references both the Squarespace
   // sitemap AND the Ghost (blog) sitemap. Without this, OTTO/Google only crawl
   // the Squarespace URLs and miss every recent Ghost blog post (DKN articles,
   // rebrand posts, scheduled content). Diagnosed via OTTO inventory 2026-05-26:
   // 158 URLs in sitemap vs 165 total pages — Ghost sub-sitemap was isolated.
   if (pathname === '/sitemap.xml' || pathname === '/sitemap.xml/') {
-    const now = new Date().toISOString();
     const indexXml = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>
     <loc>https://${PUBLIC_HOST}/sitemap-squarespace.xml</loc>
-    <lastmod>${now}</lastmod>
   </sitemap>
   <sitemap>
     <loc>https://${PUBLIC_HOST}${BLOG_PATH}/sitemap-pages.xml</loc>
-    <lastmod>${now}</lastmod>
   </sitemap>
   <sitemap>
     <loc>https://${PUBLIC_HOST}${BLOG_PATH}/sitemap-posts.xml</loc>
-    <lastmod>${now}</lastmod>
   </sitemap>
 </sitemapindex>
 `;
@@ -1305,14 +1337,25 @@ export async function middleware(request) {
         // CDN cache: 5 min fresh, 10 min stale-while-revalidate. Browsers get must-revalidate.
         'Cache-Control': 'public, max-age=0, must-revalidate, s-maxage=300, stale-while-revalidate=600',
       };
-      return new NextResponse(rewriteHtml(await res.text(), pathname, ghostPath), {
+      return new NextResponse(injectBlogAnalytics(rewriteHtml(await res.text(), pathname, ghostPath)), {
         status: res.status,
         headers
       });
     }
 
     if (/(application\/json|application\/xml|text\/xml|application\/rss\+xml|application\/atom\+xml|application\/ld\+json|text\/plain)/i.test(ct)) {
-      return new NextResponse(rewriteBody(await res.text()), {
+      let body = rewriteBody(await res.text());
+      // sitemap-posts.xml: drop the near-duplicate articles that declare another
+      // URL as canonical (DUPLICATE_CANONICALS). A sitemap must only list
+      // canonical URLs (Semrush audit 2026-09-07 "URL non canonique dans sitemap").
+      if (ghostPath === '/sitemap-posts.xml') {
+        for (const dupPath of Object.keys(DUPLICATE_CANONICALS)) {
+          const loc = `https://${PUBLIC_HOST}${BLOG_PATH}${dupPath}`;
+          body = body.replace(new RegExp(`<url>(?:(?!<\\/url>).)*<loc>${loc.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&')}\\/?<\\/loc>(?:(?!<\\/url>).)*<\\/url>\\s*`, 'gs'), '');
+        }
+      }
+      if (ghostPath === '/sitemap-posts.xml' || ghostPath === '/sitemap-pages.xml') body = removeRetiredSitemapUrls(body);
+      return new NextResponse(body, {
         status: res.status,
         headers: { 'Content-Type': ct, 'Cache-Control': 'public, max-age=300, s-maxage=600' }
       });
@@ -1358,47 +1401,12 @@ export const config = {
     '/nos-ressources/',
     '/les-100-premiers-jours-du-directeur-commercial-1',
     '/les-100-premiers-jours-du-directeur-commercial-1/',
-    // Apex pages with Squarespace schema cleanup needed (cf. APEX_SCHEMA_PAGES)
-    '/',
-    '/contact/',
-    '/pulse-audit-commercial/',
-    '/pulse-fonds/',
-    '/teach-you/',
-    '/done-with-you/',
-    '/done-for-you/',
-    '/due-diligence-commerciale/',
-    '/livre-blanc-le-collectif-commercial/',
-    '/livre-blanc-meddicc/',
-    '/livre-blanc-reseau-de-partenaires/',
-    '/livre-blanc-introduction-aux-okr/',
-    '/livre-blanc-lonboarding-efficace-des-commerciaux/',
-    '/livre-blanc-gestion-de-grands-comptes/',
-    '/livre-blanc-booster-votre-business/',
-    '/lb-pilotez-la-performance-kpi/',
-    '/lintelligence-artificielle-vente-b2b/',
-    '/les-12-profils-relationnels-en-vente/',
-    '/le-dirigeant-de-startup-dcrypt/',
-    '/les-profils-commerciaux-dcrypts/',
-    '/recruter-le-bon-commercial-en-2026/',
-    '/les-100-premiers-jours-du-directeur-commercial/',
-    '/contact-vision/',
-    '/contact-culture/',
-    '/atelier-disc-leadership/',
-    '/atelier-disc-devenez-influent/',
-    '/atelier-vision-strategie/',
-    '/atelier-culture-adn/',
-    '/merci-rdv/',
-    '/a-propos-keep-growing/',
-    // Added 2026-06-09: pages with Squarespace canonical bug (missing trailing slash)
-    '/bilan-de-competences/',
-    '/cabinets-experts/',
-    '/cgu/',
-    '/cgv/',
-    '/frequent-asked-questions/',
-    '/livres-blancs-expertise-commerciale/',
-    '/articles-linkedin-dirigeant-commercial/',
-    '/newsletter-strategie-commerciale-dirigeants/',
-    '/rendezvous/',
-    '/videos-dirigeants-commercial/',
+    // GO-LIVE 2026-08-19 : pages apex RETIRÉES du matcher. Le nouveau site est
+    // déjà propre (bons canonical, titres, meta, schema, pixel OTTO natif), donc
+    // le middleware ne doit plus les intercepter ni leur appliquer les patchs
+    // Squarespace. Elles passent désormais par la réécriture catch-all de
+    // next.config.js vers keepgrowing-preview.vercel.app. Le bloc APEX_SCHEMA_PAGES
+    // et le proxy Squarespace ci-dessus deviennent du code mort (inoffensif).
+    // Rollback : restaurer le backup middleware.js.backup-avant-golive-*.
   ]
 };

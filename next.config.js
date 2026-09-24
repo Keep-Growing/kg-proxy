@@ -31,6 +31,12 @@ const nextConfig = {
   // Diagnostic: GSC Coverage report 2026-05-18 → 17 vestigial URLs + 4 old blog slugs.
   async redirects() {
     return [
+      // Retired Ghost demo page and exact replacements for institutional links.
+      { source: '/blog-conseils-strategie-croissance/about/', destination: '/a-propos-keep-growing/', permanent: true },
+      { source: '/livres-blancs/', destination: '/livres-blancs-expertise-commerciale/', permanent: true },
+      { source: '/qui-sommes-nous/', destination: '/a-propos-keep-growing/', permanent: true },
+      { source: '/index.php/qui-sommes-nous/', destination: '/a-propos-keep-growing/', permanent: true },
+      { source: '/index.php/notre-mission/', destination: '/a-propos-keep-growing/', permanent: true },
       // --- Vestigial pages (old slugs from previous site iterations) ---
       { source: '/formations/', destination: '/teach-you/', permanent: true },
       { source: '/cabinets-experts-comptables/', destination: '/cabinets-experts/', permanent: true },
@@ -73,9 +79,13 @@ const nextConfig = {
   },
   async rewrites() {
     return {
+      // GO-LIVE 2026-08-19 : l'origine du site n'est plus Squarespace mais le
+      // nouveau site statique (projet Vercel keepgrowing-preview). Le blog reste
+      // proxifié vers Ghost par le middleware. Rollback : remettre l'ancienne
+      // destination bamboo-celery-eayp.squarespace.com + restaurer middleware.js.
       fallback: [{
         source: '/:path*',
-        destination: 'https://bamboo-celery-eayp.squarespace.com/:path*'
+        destination: 'https://keepgrowing-preview.vercel.app/:path*'
       }]
     };
   }
