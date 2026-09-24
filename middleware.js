@@ -987,6 +987,12 @@ const LEGACY_REDIRECTS = {
   '/blog-conseils-strategie-croissance/collectif-commercial-attitudes-exemplaires-8a7a7': '/blog-conseils-strategie-croissance/collectif-commercial-attitudes-exemplaires/',
   '/blog-conseils-strategie-croissance/fondamentaux-processus-commerciaux-9cyj3': '/blog-conseils-strategie-croissance/fondamentaux-processus-commerciaux/',
   '/blog-conseils-strategie-croissance/back-basics': '/blog-conseils-strategie-croissance/fonction-commerciale-retour-fondamentaux/',
+  // Fusions du 25/09/2026 (point 4 : articles cannibalisés regroupés en piliers)
+  '/blog-conseils-strategie-croissance/meddic-la-cle-de-victoire-dans-les-ventes-b2b-complexes': '/blog-conseils-strategie-croissance/formation-vente-complexe-meddic-pratique/',
+  '/blog-conseils-strategie-croissance/assurer-le-suivi-des-clients-cles-pour-fideliser-la-relation-en-b2b': '/blog-conseils-strategie-croissance/strategies-pour-fideliser-vos-clients-b2b/',
+  '/blog-conseils-strategie-croissance/etapes-cles-dun-bon-parcours-dintegration-commercial': '/blog-conseils-strategie-croissance/onboarding-commercial-plan-30-60-90-jours/',
+  '/blog-conseils-strategie-croissance/processus-donboarding-pour-engager-efficacement-vos-nouveaux-employes': '/blog-conseils-strategie-croissance/onboarding-commercial-plan-30-60-90-jours/',
+  '/blog-conseils-strategie-croissance/conseils-pour-un-onboarding-commercial-reussi': '/blog-conseils-strategie-croissance/onboarding-commercial-plan-30-60-90-jours/',
   // Old category URLs (Squarespace had categories; Ghost uses tags)
   '/blog-conseils-strategie-croissance/category/Management-Leadership': '/blog-conseils-strategie-croissance/tag/leadership/',
   '/blog-conseils-strategie-croissance/category/Transformation-commerciale': '/blog-conseils-strategie-croissance/tag/management-commercial/',
