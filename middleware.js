@@ -1002,8 +1002,10 @@ const LEGACY_REDIRECTS = {
   '/blog-conseils-strategie-croissance/strategie-de-partenariats-commerciaux-comment-reussir-vos-alliances-b2b': '/blog-conseils-strategie-croissance/engager-partenaires-b2b/',
   // Fusions du 25/09/2026 (soir) : bilan S1/S2, sales business coach
   '/blog-conseils-strategie-croissance/s2-optimisee-leadership-analyse-plan-action': '/blog-conseils-strategie-croissance/analyse-resultats-s1-s2-victorieux/',
-  '/blog-conseils-strategie-croissance/les-sales-business-coach-votre-accelerateur-de-reussite': '/blog-conseils-strategie-croissance/le-sales-business-coach-un-directeur-commercial-augmente/',
-  '/blog-conseils-strategie-croissance/les-4-axes-dinterventions-dun-sales-business-coach': '/blog-conseils-strategie-croissance/le-sales-business-coach-un-directeur-commercial-augmente/',
+  '/blog-conseils-strategie-croissance/les-sales-business-coach-votre-accelerateur-de-reussite': '/blog-conseils-strategie-croissance/business-partner-commercial/',
+  '/blog-conseils-strategie-croissance/les-4-axes-dinterventions-dun-sales-business-coach': '/blog-conseils-strategie-croissance/business-partner-commercial/',
+  // Renommage 25/09/2026 : sales business coach devient Business Partner
+  '/blog-conseils-strategie-croissance/le-sales-business-coach-un-directeur-commercial-augmente': '/blog-conseils-strategie-croissance/business-partner-commercial/',
   // Old category URLs (Squarespace had categories; Ghost uses tags)
   '/blog-conseils-strategie-croissance/category/Management-Leadership': '/blog-conseils-strategie-croissance/tag/leadership/',
   '/blog-conseils-strategie-croissance/category/Transformation-commerciale': '/blog-conseils-strategie-croissance/tag/management-commercial/',
