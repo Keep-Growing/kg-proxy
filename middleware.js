@@ -1000,6 +1000,10 @@ const LEGACY_REDIRECTS = {
   '/blog-conseils-strategie-croissance/optimisez-votre-funnel-de-vente-pour-une-efficacite-maximale': '/blog-conseils-strategie-croissance/optimiser-lentonnoir-de-vente-b2b-guide-complet-pour-booster-votre-conversion/',
   '/blog-conseils-strategie-croissance/lart-de-lentretien-annuel-au-sein-dune-equipe': '/blog-conseils-strategie-croissance/entretiens-individuels-annuels-les-astuces-pour-booster/',
   '/blog-conseils-strategie-croissance/strategie-de-partenariats-commerciaux-comment-reussir-vos-alliances-b2b': '/blog-conseils-strategie-croissance/engager-partenaires-b2b/',
+  // Fusions du 25/09/2026 (soir) : bilan S1/S2, sales business coach
+  '/blog-conseils-strategie-croissance/s2-optimisee-leadership-analyse-plan-action': '/blog-conseils-strategie-croissance/analyse-resultats-s1-s2-victorieux/',
+  '/blog-conseils-strategie-croissance/les-sales-business-coach-votre-accelerateur-de-reussite': '/blog-conseils-strategie-croissance/le-sales-business-coach-un-directeur-commercial-augmente/',
+  '/blog-conseils-strategie-croissance/les-4-axes-dinterventions-dun-sales-business-coach': '/blog-conseils-strategie-croissance/le-sales-business-coach-un-directeur-commercial-augmente/',
   // Old category URLs (Squarespace had categories; Ghost uses tags)
   '/blog-conseils-strategie-croissance/category/Management-Leadership': '/blog-conseils-strategie-croissance/tag/leadership/',
   '/blog-conseils-strategie-croissance/category/Transformation-commerciale': '/blog-conseils-strategie-croissance/tag/management-commercial/',
