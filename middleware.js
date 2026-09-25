@@ -65,15 +65,7 @@ function rewriteBody(text) {
 // SEO consolidation without deleting content: the weaker page declares the
 // stronger one as canonical. Keys/values are ghostPath (post-BLOG_PATH).
 const DUPLICATE_CANONICALS = {
-  '/esprit-d-equipe-collaboration-solidarite/': '/le-leadership-de-lequipe-commerciale-facteur-humain-au/',
-  '/conversations-executives-seduire-grands-comptes/': '/executive-conversation-pitch-dirigeant/',
-  '/la-peur-de-closer-comment-surmonter-crainte-conclure-vente/': '/peur-de-conclure-crainte-de-vendre/',
-  '/cle-de-la-reussite-en-vente-surmonter-peur-du-rejet/': '/cle-reussite-vente-techniques-strategies/',
-  '/monter-reseau-partenaires-performant/': '/strategie-reseau-partenaires-b2b/',
-  '/quelles-sont-les-composantes-dune-bonne-formation-a-la/': '/formation-vente-competences-commerciales/',
-  '/lagenda-du-dirigeant-de-startup-naviguer-entre-le-les/': '/maitriser-leadership-startup/',
-  '/mesurer-lefficacite-du-funnel-de-vente-a-travers-des-kpis/': '/indicateurs-cles-vente-kpis-strategie-commerciale/',
-  '/boostez-votre-equipe-commerciale-avec-des-rituels-danimation/': '/efficacite-commerciale-cohesion-equipes/',
+  // Vidé le 25/09/2026 : toutes les paires sont désormais des 301 (LEGACY_REDIRECTS).
   // '/optimiser-force-commerciale-performance-durable/' retiré le 07/09/2026 :
   // l'article a été entièrement réécrit (vision, stratégie, structure, culture,
   // pilotage) et n'est plus un doublon de la transformation digitale. C'est le
@@ -993,6 +985,21 @@ const LEGACY_REDIRECTS = {
   '/blog-conseils-strategie-croissance/etapes-cles-dun-bon-parcours-dintegration-commercial': '/blog-conseils-strategie-croissance/onboarding-commercial-plan-30-60-90-jours/',
   '/blog-conseils-strategie-croissance/processus-donboarding-pour-engager-efficacement-vos-nouveaux-employes': '/blog-conseils-strategie-croissance/onboarding-commercial-plan-30-60-90-jours/',
   '/blog-conseils-strategie-croissance/conseils-pour-un-onboarding-commercial-reussi': '/blog-conseils-strategie-croissance/onboarding-commercial-plan-30-60-90-jours/',
+  // Doublons et fusions du 25/09/2026 (analyse CANNIBALISATION.md) : canonicals remplacés par des 301
+  '/blog-conseils-strategie-croissance/esprit-d-equipe-collaboration-solidarite': '/blog-conseils-strategie-croissance/le-leadership-de-lequipe-commerciale-facteur-humain-au/',
+  '/blog-conseils-strategie-croissance/conversations-executives-seduire-grands-comptes': '/blog-conseils-strategie-croissance/executive-conversation-pitch-dirigeant/',
+  '/blog-conseils-strategie-croissance/la-peur-de-closer-comment-surmonter-crainte-conclure-vente': '/blog-conseils-strategie-croissance/peur-de-conclure-crainte-de-vendre/',
+  '/blog-conseils-strategie-croissance/cle-de-la-reussite-en-vente-surmonter-peur-du-rejet': '/blog-conseils-strategie-croissance/cle-reussite-vente-techniques-strategies/',
+  '/blog-conseils-strategie-croissance/monter-reseau-partenaires-performant': '/blog-conseils-strategie-croissance/strategie-reseau-partenaires-b2b/',
+  '/blog-conseils-strategie-croissance/quelles-sont-les-composantes-dune-bonne-formation-a-la': '/blog-conseils-strategie-croissance/formation-vente-competences-commerciales/',
+  '/blog-conseils-strategie-croissance/lagenda-du-dirigeant-de-startup-naviguer-entre-le-les': '/blog-conseils-strategie-croissance/maitriser-leadership-startup/',
+  '/blog-conseils-strategie-croissance/mesurer-lefficacite-du-funnel-de-vente-a-travers-des-kpis': '/blog-conseils-strategie-croissance/indicateurs-cles-vente-kpis-strategie-commerciale/',
+  '/blog-conseils-strategie-croissance/boostez-votre-equipe-commerciale-avec-des-rituels-danimation': '/blog-conseils-strategie-croissance/efficacite-commerciale-cohesion-equipes/',
+  '/blog-conseils-strategie-croissance/prospection-les-cles-dune-approche-gagnante': '/blog-conseils-strategie-croissance/maitriser-lart-de-la-prospection-en-b2b/',
+  '/blog-conseils-strategie-croissance/mise-en-place-dokr-et-kpis-operationnels-guide-pratique': '/blog-conseils-strategie-croissance/comment-implementer-les-okr-dans-une-pme-guide-pratique-2026/',
+  '/blog-conseils-strategie-croissance/optimisez-votre-funnel-de-vente-pour-une-efficacite-maximale': '/blog-conseils-strategie-croissance/optimiser-lentonnoir-de-vente-b2b-guide-complet-pour-booster-votre-conversion/',
+  '/blog-conseils-strategie-croissance/lart-de-lentretien-annuel-au-sein-dune-equipe': '/blog-conseils-strategie-croissance/entretiens-individuels-annuels-les-astuces-pour-booster/',
+  '/blog-conseils-strategie-croissance/strategie-de-partenariats-commerciaux-comment-reussir-vos-alliances-b2b': '/blog-conseils-strategie-croissance/engager-partenaires-b2b/',
   // Old category URLs (Squarespace had categories; Ghost uses tags)
   '/blog-conseils-strategie-croissance/category/Management-Leadership': '/blog-conseils-strategie-croissance/tag/leadership/',
   '/blog-conseils-strategie-croissance/category/Transformation-commerciale': '/blog-conseils-strategie-croissance/tag/management-commercial/',
