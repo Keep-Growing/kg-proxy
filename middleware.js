@@ -713,8 +713,8 @@ const META_OVERRIDES = {
     description: "Diagnostic commercial pour PME et ETI en 4 à 6 semaines : questionnaires anonymes, entretiens, 4 dimensions et plan d'action à 90 jours. Version Express gratuite.",
   },
   '/done-with-you/': {
-    title: 'Mentoring commercial : un ancien CSO exécute votre plan',
-    description: "Un ancien CSO à vos côtés pour exécuter votre plan de transformation commerciale. Résultats mesurés dès 90 jours.",
+    title: 'Mentoring commercial pour CEO et directeurs commerciaux',
+    description: "Mentoring commercial par d'anciens directeurs commerciaux : sessions régulières, hotline et sparring partner pour CEO et directeurs commerciaux. Dès 2 500 €/mois.",
   },
 };
 
