@@ -1425,6 +1425,8 @@ export const config = {
     '/nos-ressources/',
     '/les-100-premiers-jours-du-directeur-commercial-1',
     '/les-100-premiers-jours-du-directeur-commercial-1/',
+    '/merci-pulse',
+    '/merci-pulse/',
     // GO-LIVE 2026-08-19 : pages apex RETIRÉES du matcher. Le nouveau site est
     // déjà propre (bons canonical, titres, meta, schema, pixel OTTO natif), donc
     // le middleware ne doit plus les intercepter ni leur appliquer les patchs
