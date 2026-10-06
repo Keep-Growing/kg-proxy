@@ -258,7 +258,7 @@ const FAQ_PULSE_AUDIT = {
       'name': 'Quelles sont les différentes offres Pulse ?',
       'acceptedAnswer': {
         '@type': 'Answer',
-        'text': "Pulse Express : gratuit, jusqu'à 5 commerciaux (questionnaire, score, recommandations, restitution d'une heure). Pulse Startup : à partir de 6 000 € HT, 5 à 10 commerciaux. Pulse Scaleup-PME : à partir de 12 000 € HT, 10 à 50 commerciaux, avec séminaire d'alignement d'une demi-journée. Pulse Entreprise : à partir de 25 000 € HT, 50 commerciaux et plus ou multi-sites, avec séminaire d'une journée en comité de direction. Pulse Fonds : sur mesure pour les fonds d'investissement.",
+        'text': "Trois formats, sur devis selon la taille de l'équipe et le périmètre. Pulse Startup : 5 à 10 commerciaux. Pulse Scaleup-PME : 10 à 50 commerciaux, avec séminaire d'alignement d'une demi-journée. Pulse Entreprise : 50 commerciaux et plus ou multi-sites, avec séminaire d'une journée en comité de direction. Pulse Fonds : sur mesure pour les fonds d'investissement.",
       },
     },
     {
@@ -702,7 +702,7 @@ const META_OVERRIDES = {
   },
   '/pulse-audit-commercial/': {
     title: 'Diagnostic commercial PME et ETI en 4 à 6 semaines | Pulse 360°',
-    description: "Diagnostic commercial pour PME et ETI en 4 à 6 semaines : questionnaires anonymes, entretiens, 4 dimensions et plan d'action à 90 jours. Version Express gratuite.",
+    description: "Diagnostic commercial pour PME et ETI en 4 à 6 semaines : la vérité sur votre équipe, les causes réelles, les priorités et un plan d'action à 90 jours.",
   },
   '/done-with-you/': {
     title: 'Mentoring commercial pour CEO et directeurs commerciaux',
@@ -951,6 +951,9 @@ const LEGACY_REDIRECTS = {
   // Apex / Squarespace paths
   // /home and /home/ are Squarespace duplicate of /, must 301 to root
   '/home': '/',
+  // 06/10/2026 : Pulse Express abandonné, page de remerciement retirée
+  '/merci-pulse/': '/pulse-audit-commercial/',
+  '/merci-pulse': '/pulse-audit-commercial/',
   '/home/': '/',
   // /nos-ressources currently chains 3 redirects to the blog index, and 272
   // internal links across the site still point at it (audit 114515).
