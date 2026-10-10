@@ -17,10 +17,10 @@ test('no Google script before consent, reject stays disabled', () => {
 test('accept once, repeated accept and reaccept do not duplicate page views', () => {
   const b = browser(); const consent = b.handlers['kg:analytics-consent'];
   consent({ detail: true }); consent({ detail: true });
-  assert.equal(b.scripts.length, 1);
+  assert.equal(b.scripts.length, 2); // gtag + lemlist (identification des entreprises, 10/10/2026)
   assert.equal(b.commands().filter(x => x[0] === 'event' && x[1] === 'page_view').length, 1);
   consent({ detail: false }); assert.equal(b.window['ga-disable-G-CL8FNXBBD8'], true);
-  consent({ detail: true }); assert.equal(b.scripts.length, 1);
+  consent({ detail: true }); assert.equal(b.scripts.length, 2);
 });
 test('preview never initializes production measurement', () => {
   const b = browser('kg-proxy-test.vercel.app'); assert.equal(b.scripts.length, 0); assert.deepEqual(b.commands(), []);

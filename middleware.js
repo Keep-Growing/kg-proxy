@@ -954,6 +954,9 @@ const LEGACY_REDIRECTS = {
   // 06/10/2026 : Pulse Express abandonné, page de remerciement retirée
   '/merci-pulse/': '/pulse-audit-commercial/',
   '/merci-pulse': '/pulse-audit-commercial/',
+  // 09/10/2026 : fusions de doublons (réseau hybride intégré à l'article réseau de partenaires,
+  // l'article bilan de compétences dirigeant reste en ligne, décision David 10/10)
+  '/blog-conseils-strategie-croissance/monter-reseau-partenaires-gestion-hybride': '/blog-conseils-strategie-croissance/strategie-reseau-partenaires-b2b/',
   '/home/': '/',
   // /nos-ressources currently chains 3 redirects to the blog index, and 272
   // internal links across the site still point at it (audit 114515).
