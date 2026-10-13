@@ -954,6 +954,8 @@ const LEGACY_REDIRECTS = {
   // 06/10/2026 : Pulse Express abandonné, page de remerciement retirée
   '/merci-pulse/': '/pulse-audit-commercial/',
   '/merci-pulse': '/pulse-audit-commercial/',
+  // 13/10/2026 : KG18, l'adresse suit le titre (2027)
+  '/recruter-le-bon-commercial-en-2026': '/recruter-le-bon-commercial-en-2027/',
   // 09/10/2026 : fusions de doublons (réseau hybride intégré à l'article réseau de partenaires,
   // l'article bilan de compétences dirigeant reste en ligne, décision David 10/10)
   '/blog-conseils-strategie-croissance/monter-reseau-partenaires-gestion-hybride': '/blog-conseils-strategie-croissance/strategie-reseau-partenaires-b2b/',
@@ -1188,7 +1190,7 @@ ${entries.map((p) => `  <url>
     '/livre-blanc-gestion-de-grands-comptes/', '/livre-blanc-booster-votre-business/',
     '/lb-pilotez-la-performance-kpi/', '/lintelligence-artificielle-vente-b2b/',
     '/les-12-profils-relationnels-en-vente/', '/le-dirigeant-de-startup-dcrypt/',
-    '/les-profils-commerciaux-dcrypts/', '/recruter-le-bon-commercial-en-2026/',
+    '/les-profils-commerciaux-dcrypts/', '/recruter-le-bon-commercial-en-2027/',
     '/les-100-premiers-jours-du-directeur-commercial/',
     '/contact-vision/', '/contact-culture/',
     '/atelier-disc-leadership/', '/atelier-disc-devenez-influent/',
@@ -1430,6 +1432,8 @@ export const config = {
     '/les-100-premiers-jours-du-directeur-commercial-1/',
     '/merci-pulse',
     '/merci-pulse/',
+    '/recruter-le-bon-commercial-en-2026',
+    '/recruter-le-bon-commercial-en-2026/',
     // GO-LIVE 2026-08-19 : pages apex RETIRÉES du matcher. Le nouveau site est
     // déjà propre (bons canonical, titres, meta, schema, pixel OTTO natif), donc
     // le middleware ne doit plus les intercepter ni leur appliquer les patchs
