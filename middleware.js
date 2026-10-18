@@ -1,5 +1,5 @@
 import { refineBlogDesign, addPulseCta } from './lib/blog-design.mjs';
-import { fixBlogIndexHeading, removeRetiredSitemapUrls } from './lib/blog-seo.mjs';
+import { fixBlogIndexHeading, removeRetiredSitemapUrls, linkKgEntities } from './lib/blog-seo.mjs';
 import { injectBlogAnalytics, injectVercelInsights } from './lib/blog-analytics.mjs';
 import { BLOG_TITLES } from './lib/blog-titles.mjs';
 // Liste des articles publies, source du sitemap-posts.xml genere ici
@@ -122,7 +122,7 @@ function decodeJsonLdEntities(html) {
       // Attempt JSON parse + structural cleanup (relative URL + null fields)
       try {
         const parsed = JSON.parse(decoded);
-        const cleaned = cleanSchemaObject(parsed);
+        const cleaned = linkKgEntities(cleanSchemaObject(parsed));
         decoded = JSON.stringify(cleaned);
       } catch {
         // If parse fails (e.g. multiple objects on one line, malformed), return decoded-only
