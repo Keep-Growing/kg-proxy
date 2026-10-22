@@ -990,6 +990,8 @@ const LEGACY_REDIRECTS = {
   '/blog-conseils-strategie-croissance/conversations-executives-seduire-grands-comptes': '/blog-conseils-strategie-croissance/executive-conversation-pitch-dirigeant/',
   '/blog-conseils-strategie-croissance/la-peur-de-closer-comment-surmonter-crainte-conclure-vente': '/blog-conseils-strategie-croissance/peur-de-conclure-crainte-de-vendre/',
   '/blog-conseils-strategie-croissance/cle-de-la-reussite-en-vente-surmonter-peur-du-rejet': '/blog-conseils-strategie-croissance/cle-reussite-vente-techniques-strategies/',
+  // 22/10/2026 : variante mal formée connue de Google (404 en Search Console)
+  '/blog-conseils-strategie-croissance/cle-reussite-vente-surmonter-peur-du-rejet-cle-reussite-vente': '/blog-conseils-strategie-croissance/cle-reussite-vente-techniques-strategies/',
   '/blog-conseils-strategie-croissance/monter-reseau-partenaires-performant': '/blog-conseils-strategie-croissance/strategie-reseau-partenaires-b2b/',
   '/blog-conseils-strategie-croissance/quelles-sont-les-composantes-dune-bonne-formation-a-la': '/blog-conseils-strategie-croissance/formation-vente-competences-commerciales/',
   '/blog-conseils-strategie-croissance/lagenda-du-dirigeant-de-startup-naviguer-entre-le-les': '/blog-conseils-strategie-croissance/maitriser-leadership-startup/',
