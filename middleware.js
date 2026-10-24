@@ -2,6 +2,7 @@ import { refineBlogDesign, addPulseCta } from './lib/blog-design.mjs';
 import { fixBlogIndexHeading, removeRetiredSitemapUrls, linkKgEntities } from './lib/blog-seo.mjs';
 import { injectBlogAnalytics, injectVercelInsights } from './lib/blog-analytics.mjs';
 import { BLOG_TITLES } from './lib/blog-titles.mjs';
+import { optimizeFeatureImage } from './lib/blog-perf.mjs';
 // Liste des articles publies, source du sitemap-posts.xml genere ici
 // (cf. commentaire au niveau de la route). A REGENERER A CHAQUE PUBLICATION.
 import BLOG_POSTS from './lib/blog-posts.json' assert { type: 'json' };
@@ -901,6 +902,9 @@ function rewriteHtml(html, pathname, ghostPath) {
       out = out.replace('</head>', '<meta name="robots" content="noindex,follow"/>\n</head>');
     }
   }
+
+  // Couverture d'article en WebP redimensionne + dimensions (vitesse, 24/10/2026).
+  out = optimizeFeatureImage(out);
 
   return addPulseCta(refineBlogDesign(fixBlogIndexHeading(out, ghostPath)));
 }
