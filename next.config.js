@@ -62,7 +62,7 @@ const nextConfig = {
       },
       {
         source: '/blog-conseils-strategie-croissance/collectif-commercial-attitudes-exemplaires-8a7a7/',
-        destination: '/blog-conseils-strategie-croissance/collectif-commercial-attitudes-exemplaires/',
+        destination: '/blog-conseils-strategie-croissance/efficacite-collectif-commercial-alignement-respect/',
         permanent: true,
       },
       {

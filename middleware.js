@@ -980,7 +980,7 @@ const LEGACY_REDIRECTS = {
   '/diagnostic-commercial': '/pulse-audit-commercial/',
   // Old blog article slugs → canonical pages
   '/blog-conseils-strategie-croissance/dominer-marche-strategie-commerciale-ciblee': '/blog-conseils-strategie-croissance/',
-  '/blog-conseils-strategie-croissance/collectif-commercial-attitudes-exemplaires-8a7a7': '/blog-conseils-strategie-croissance/collectif-commercial-attitudes-exemplaires/',
+  '/blog-conseils-strategie-croissance/collectif-commercial-attitudes-exemplaires-8a7a7': '/blog-conseils-strategie-croissance/efficacite-collectif-commercial-alignement-respect/',
   '/blog-conseils-strategie-croissance/fondamentaux-processus-commerciaux-9cyj3': '/blog-conseils-strategie-croissance/fondamentaux-processus-commerciaux/',
   '/blog-conseils-strategie-croissance/back-basics': '/blog-conseils-strategie-croissance/fonction-commerciale-retour-fondamentaux/',
   // Fusions du 25/09/2026 (point 4 : articles cannibalisés regroupés en piliers)
@@ -993,9 +993,9 @@ const LEGACY_REDIRECTS = {
   '/blog-conseils-strategie-croissance/esprit-d-equipe-collaboration-solidarite': '/blog-conseils-strategie-croissance/le-leadership-de-lequipe-commerciale-facteur-humain-au/',
   '/blog-conseils-strategie-croissance/conversations-executives-seduire-grands-comptes': '/blog-conseils-strategie-croissance/executive-conversation-pitch-dirigeant/',
   '/blog-conseils-strategie-croissance/la-peur-de-closer-comment-surmonter-crainte-conclure-vente': '/blog-conseils-strategie-croissance/peur-de-conclure-crainte-de-vendre/',
-  '/blog-conseils-strategie-croissance/cle-de-la-reussite-en-vente-surmonter-peur-du-rejet': '/blog-conseils-strategie-croissance/cle-reussite-vente-techniques-strategies/',
+  '/blog-conseils-strategie-croissance/cle-de-la-reussite-en-vente-surmonter-peur-du-rejet': '/blog-conseils-strategie-croissance/prospection-telephonique-surmonter-peurs/',
   // 22/10/2026 : variante mal formée connue de Google (404 en Search Console)
-  '/blog-conseils-strategie-croissance/cle-reussite-vente-surmonter-peur-du-rejet-cle-reussite-vente': '/blog-conseils-strategie-croissance/cle-reussite-vente-techniques-strategies/',
+  '/blog-conseils-strategie-croissance/cle-reussite-vente-surmonter-peur-du-rejet-cle-reussite-vente': '/blog-conseils-strategie-croissance/prospection-telephonique-surmonter-peurs/',
   // 24/10/2026 : vague 3 du tri des articles génériques (validée par David), articles passés en brouillon
   '/blog-conseils-strategie-croissance/checklist-pour-evaluer-nouveaux-clients-et-risques-en-b2b': '/blog-conseils-strategie-croissance/due-diligence-commerciale-evaluer-force-de-vente/',
   '/blog-conseils-strategie-croissance/les-erreurs-frequentes-des-startups-en-phase-de-croissance-et-comment-les-eviter': '/blog-conseils-strategie-croissance/pmf-croissance-structurer-equipe-commerciale-product-market-fit/',
@@ -1038,6 +1038,15 @@ const LEGACY_REDIRECTS = {
   '/blog-conseils-strategie-croissance/optimisez-votre-funnel-de-vente-pour-une-efficacite-maximale': '/blog-conseils-strategie-croissance/optimiser-lentonnoir-de-vente-b2b-guide-complet-pour-booster-votre-conversion/',
   '/blog-conseils-strategie-croissance/lart-de-lentretien-annuel-au-sein-dune-equipe': '/blog-conseils-strategie-croissance/entretiens-individuels-annuels-les-astuces-pour-booster/',
   '/blog-conseils-strategie-croissance/strategie-de-partenariats-commerciaux-comment-reussir-vos-alliances-b2b': '/blog-conseils-strategie-croissance/engager-partenaires-b2b/',
+  // 25/10/2026 : vague 2 du tri, lot 2 de fusions (validé par David)
+  '/blog-conseils-strategie-croissance/quotas-commerciaux-peur-motivation-performance': '/blog-conseils-strategie-croissance/le-danger-des-objectifs-trop-eleves-creer-une-culture/',
+  '/blog-conseils-strategie-croissance/comment-equilibrer-les-objectifs-de-vente-sans-decourager': '/blog-conseils-strategie-croissance/le-danger-des-objectifs-trop-eleves-creer-une-culture/',
+  '/blog-conseils-strategie-croissance/cle-reussite-vente-techniques-strategies': '/blog-conseils-strategie-croissance/prospection-telephonique-surmonter-peurs/',
+  '/blog-conseils-strategie-croissance/collectif-commercial-attitudes-exemplaires': '/blog-conseils-strategie-croissance/efficacite-collectif-commercial-alignement-respect/',
+  '/blog-conseils-strategie-croissance/bbedc-deverrouillez-votre-succes-commercial-avec-une-methode': '/blog-conseils-strategie-croissance/bant-vs-meddic-methode-qualification-vente-b2b/',
+  '/blog-conseils-strategie-croissance/champ-la-nouvelle-ere-de-qualification-client': '/blog-conseils-strategie-croissance/bant-vs-meddic-methode-qualification-vente-b2b/',
+  '/blog-conseils-strategie-croissance/l-agenda-des-priorites-de-la-vision-a-lexecution': '/blog-conseils-strategie-croissance/maitriser-leadership-startup/',
+  '/blog-conseils-strategie-croissance/le-quotidien-reel': '/blog-conseils-strategie-croissance/maitriser-leadership-startup/',
   // Fusions du 25/09/2026 (soir) : bilan S1/S2, sales business coach
   '/blog-conseils-strategie-croissance/s2-optimisee-leadership-analyse-plan-action': '/blog-conseils-strategie-croissance/analyse-resultats-s1-s2-victorieux/',
   '/blog-conseils-strategie-croissance/les-sales-business-coach-votre-accelerateur-de-reussite': '/blog-conseils-strategie-croissance/business-partner-commercial/',
