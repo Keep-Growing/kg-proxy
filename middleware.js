@@ -1035,7 +1035,7 @@ const LEGACY_REDIRECTS = {
   '/blog-conseils-strategie-croissance/boostez-votre-equipe-commerciale-avec-des-rituels-danimation': '/blog-conseils-strategie-croissance/efficacite-commerciale-cohesion-equipes/',
   '/blog-conseils-strategie-croissance/prospection-les-cles-dune-approche-gagnante': '/blog-conseils-strategie-croissance/maitriser-lart-de-la-prospection-en-b2b/',
   '/blog-conseils-strategie-croissance/mise-en-place-dokr-et-kpis-operationnels-guide-pratique': '/blog-conseils-strategie-croissance/okr-force-de-vente-objectifs/',
-  '/blog-conseils-strategie-croissance/optimisez-votre-funnel-de-vente-pour-une-efficacite-maximale': '/blog-conseils-strategie-croissance/optimiser-lentonnoir-de-vente-b2b-guide-complet-pour-booster-votre-conversion/',
+  '/blog-conseils-strategie-croissance/optimisez-votre-funnel-de-vente-pour-une-efficacite-maximale': '/blog-conseils-strategie-croissance/taux-de-transformation-commercial-calcul/',
   '/blog-conseils-strategie-croissance/lart-de-lentretien-annuel-au-sein-dune-equipe': '/blog-conseils-strategie-croissance/entretiens-individuels-annuels-les-astuces-pour-booster/',
   '/blog-conseils-strategie-croissance/strategie-de-partenariats-commerciaux-comment-reussir-vos-alliances-b2b': '/blog-conseils-strategie-croissance/engager-partenaires-b2b/',
   // 25/10/2026 : vague 2 du tri, lot 2 de fusions (validé par David)
@@ -1050,6 +1050,14 @@ const LEGACY_REDIRECTS = {
   // 25/10/2026 : fusion OKR (validée par David)
   '/blog-conseils-strategie-croissance/lalignement-des-objectifs-commerciaux-avec-la-strategie': '/blog-conseils-strategie-croissance/okr-force-de-vente-objectifs/',
   '/blog-conseils-strategie-croissance/comment-implementer-les-okr-dans-une-pme-guide-pratique-2026': '/blog-conseils-strategie-croissance/okr-force-de-vente-objectifs/',
+  // 25/10/2026 : vague 2 du tri, lot 3 de fusions (validé par David)
+  '/blog-conseils-strategie-croissance/recommandations-clients-conversions': '/blog-conseils-strategie-croissance/strategies-pour-fideliser-vos-clients-b2b/',
+  '/blog-conseils-strategie-croissance/creation-de-valeur-a-travers-les-relations-clients': '/blog-conseils-strategie-croissance/strategies-pour-fideliser-vos-clients-b2b/',
+  '/blog-conseils-strategie-croissance/la-science-derriere-vente-une-plongee-profonde-dans-les': '/blog-conseils-strategie-croissance/indicateurs-cles-vente-kpis-strategie-commerciale/',
+  '/blog-conseils-strategie-croissance/methode-ecart-gerez-les-objections-clients-avec-elegance': '/blog-conseils-strategie-croissance/gestion-objections-techniques-ventes/',
+  '/blog-conseils-strategie-croissance/optimiser-lentonnoir-de-vente-b2b-guide-complet-pour-booster-votre-conversion': '/blog-conseils-strategie-croissance/taux-de-transformation-commercial-calcul/',
+  '/blog-conseils-strategie-croissance/lart-de-sentourer-un-des-cles-du-succes': '/blog-conseils-strategie-croissance/sparring-partner-dirigeant-commercial/',
+  '/blog-conseils-strategie-croissance/lart-de-bien-sentourer-en-tant-que-dirigeant-startup-cle': '/blog-conseils-strategie-croissance/sparring-partner-dirigeant-commercial/',
   // Fusions du 25/09/2026 (soir) : bilan S1/S2, sales business coach
   '/blog-conseils-strategie-croissance/s2-optimisee-leadership-analyse-plan-action': '/blog-conseils-strategie-croissance/analyse-resultats-s1-s2-victorieux/',
   '/blog-conseils-strategie-croissance/les-sales-business-coach-votre-accelerateur-de-reussite': '/blog-conseils-strategie-croissance/business-partner-commercial/',
