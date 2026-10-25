@@ -1067,6 +1067,17 @@ const LEGACY_REDIRECTS = {
   '/blog-conseils-strategie-croissance/pour-un-contenu-engageant-qui-soutient-les-objectifs-de': '/blog-conseils-strategie-croissance/alignement-marketing-ventes-b2b/',
   '/blog-conseils-strategie-croissance/booster-vos-ventes-b2b-le-pouvoir-des-bonnes-strategies': '/blog-conseils-strategie-croissance/alignement-marketing-ventes-b2b/',
   '/blog-conseils-strategie-croissance/choisir-entre-freelance-boutique-ou-grand-cabinet-de-conseil': '/blog-conseils-strategie-croissance/comment-choisir-un-cabinet-de-conseil-adapte-a-votre-pme/',
+  // 25/10/2026 : vague 2 du tri, lot 5 de fusions (validé par David)
+  '/blog-conseils-strategie-croissance/plan-daction-s2-de-la-strategie-a-piste-course': '/blog-conseils-strategie-croissance/analyse-resultats-s1-s2-victorieux/',
+  '/blog-conseils-strategie-croissance/analyse-du-moteur-des-outils-et-processus-la-mecanique': '/blog-conseils-strategie-croissance/analyse-resultats-s1-s2-victorieux/',
+  '/blog-conseils-strategie-croissance/la-gestion-de-performance-a-lumiere-du-coaching': '/blog-conseils-strategie-croissance/business-partner-commercial/',
+  '/blog-conseils-strategie-croissance/la-structuration-de-lequipe-commerciale-le-deuxieme-moment': '/blog-conseils-strategie-croissance/business-partner-commercial/',
+  '/blog-conseils-strategie-croissance/efficacite-collectif-commercial-vision-unifiee': '/blog-conseils-strategie-croissance/optimiser-force-commerciale-performance-durable/',
+  '/blog-conseils-strategie-croissance/efficacite-equipe-de-vente': '/blog-conseils-strategie-croissance/optimiser-force-commerciale-performance-durable/',
+  '/blog-conseils-strategie-croissance/methodes-pour-recruter-des-profils-strategiques-et-reduire-le-turnover': '/blog-conseils-strategie-croissance/recrutement-strategique-penurie-talents/',
+  '/blog-conseils-strategie-croissance/creer-un-pitch-efficace-b-pourquoi': '/blog-conseils-strategie-croissance/executive-conversation-pitch-dirigeant/',
+  '/blog-conseils-strategie-croissance/maitriser-lart-du-pitch-trois-scenarios-pratiques': '/blog-conseils-strategie-croissance/executive-conversation-pitch-dirigeant/',
+  '/blog-conseils-strategie-croissance/maitriser-lart-du-pitch-comment-un-expert-en-vente-utilise': '/blog-conseils-strategie-croissance/executive-conversation-pitch-dirigeant/',
   // Fusions du 25/09/2026 (soir) : bilan S1/S2, sales business coach
   '/blog-conseils-strategie-croissance/s2-optimisee-leadership-analyse-plan-action': '/blog-conseils-strategie-croissance/analyse-resultats-s1-s2-victorieux/',
   '/blog-conseils-strategie-croissance/les-sales-business-coach-votre-accelerateur-de-reussite': '/blog-conseils-strategie-croissance/business-partner-commercial/',
