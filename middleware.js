@@ -990,7 +990,7 @@ const LEGACY_REDIRECTS = {
   '/blog-conseils-strategie-croissance/processus-donboarding-pour-engager-efficacement-vos-nouveaux-employes': '/blog-conseils-strategie-croissance/onboarding-commercial-plan-30-60-90-jours/',
   '/blog-conseils-strategie-croissance/conseils-pour-un-onboarding-commercial-reussi': '/blog-conseils-strategie-croissance/onboarding-commercial-plan-30-60-90-jours/',
   // Doublons et fusions du 25/09/2026 (analyse CANNIBALISATION.md) : canonicals remplacés par des 301
-  '/blog-conseils-strategie-croissance/esprit-d-equipe-collaboration-solidarite': '/blog-conseils-strategie-croissance/le-leadership-de-lequipe-commerciale-facteur-humain-au/',
+  '/blog-conseils-strategie-croissance/esprit-d-equipe-collaboration-solidarite': '/blog-conseils-strategie-croissance/leadership-commercial-style-management/',
   '/blog-conseils-strategie-croissance/conversations-executives-seduire-grands-comptes': '/blog-conseils-strategie-croissance/executive-conversation-pitch-dirigeant/',
   '/blog-conseils-strategie-croissance/la-peur-de-closer-comment-surmonter-crainte-conclure-vente': '/blog-conseils-strategie-croissance/peur-de-conclure-crainte-de-vendre/',
   '/blog-conseils-strategie-croissance/cle-de-la-reussite-en-vente-surmonter-peur-du-rejet': '/blog-conseils-strategie-croissance/prospection-telephonique-surmonter-peurs/',
@@ -1078,6 +1078,18 @@ const LEGACY_REDIRECTS = {
   '/blog-conseils-strategie-croissance/creer-un-pitch-efficace-b-pourquoi': '/blog-conseils-strategie-croissance/executive-conversation-pitch-dirigeant/',
   '/blog-conseils-strategie-croissance/maitriser-lart-du-pitch-trois-scenarios-pratiques': '/blog-conseils-strategie-croissance/executive-conversation-pitch-dirigeant/',
   '/blog-conseils-strategie-croissance/maitriser-lart-du-pitch-comment-un-expert-en-vente-utilise': '/blog-conseils-strategie-croissance/executive-conversation-pitch-dirigeant/',
+  // 25/10/2026 : vague 2 du tri, lot 6 de fusions (validé par David)
+  '/blog-conseils-strategie-croissance/mentoring-prise-de-fonction-directeur-commercial-100-jours': '/blog-conseils-strategie-croissance/prise-de-fonction-en-tant-que-directeur-commercial-les-100-premiers-jours/',
+  '/blog-conseils-strategie-croissance/la-voie-traditionnelle-les-differents-modeles-de': '/blog-conseils-strategie-croissance/la-remuneration-des-commerciaux-un-levier-de-parmi-dautres/',
+  '/blog-conseils-strategie-croissance/louverture-ecoutez-et-repondez-activement': '/blog-conseils-strategie-croissance/vente-orientee-metier-former-commerciaux-dsi-dg/',
+  '/blog-conseils-strategie-croissance/curiosite-en-vente-posez-les-bonnes-questions': '/blog-conseils-strategie-croissance/vente-orientee-metier-former-commerciaux-dsi-dg/',
+  '/blog-conseils-strategie-croissance/boostez-vos-ventes-avec-la-vente-consultative': '/blog-conseils-strategie-croissance/vente-orientee-metier-former-commerciaux-dsi-dg/',
+  '/blog-conseils-strategie-croissance/maitrisez-lart-des-reunions-clients-astuces-et-strategies': '/blog-conseils-strategie-croissance/vente-orientee-metier-former-commerciaux-dsi-dg/',
+  '/blog-conseils-strategie-croissance/debloquez-le-potentiel-de-votre-equipe-avec-les-fenetres-de-johari': '/blog-conseils-strategie-croissance/angle-mort-dirigeant-commercial/',
+  '/blog-conseils-strategie-croissance/coaching-executif-et-programmes-leadership-sur-mesure': '/blog-conseils-strategie-croissance/mentoring-commercial-dirigeant-pourquoi-quand/',
+  '/blog-conseils-strategie-croissance/piloter-les-projets-de-changement-avec-une-acceptation-durable': '/blog-conseils-strategie-croissance/vision-entreprise-72-transformations-commerciales-echec/',
+  '/blog-conseils-strategie-croissance/lego-la-plus-grosse-resistance-au-changement': '/blog-conseils-strategie-croissance/vision-entreprise-72-transformations-commerciales-echec/',
+  '/blog-conseils-strategie-croissance/le-leadership-de-lequipe-commerciale-facteur-humain-au': '/blog-conseils-strategie-croissance/leadership-commercial-style-management/',
   // Fusions du 25/09/2026 (soir) : bilan S1/S2, sales business coach
   '/blog-conseils-strategie-croissance/s2-optimisee-leadership-analyse-plan-action': '/blog-conseils-strategie-croissance/analyse-resultats-s1-s2-victorieux/',
   '/blog-conseils-strategie-croissance/les-sales-business-coach-votre-accelerateur-de-reussite': '/blog-conseils-strategie-croissance/business-partner-commercial/',
