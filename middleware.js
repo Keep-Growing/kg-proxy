@@ -999,10 +999,10 @@ const LEGACY_REDIRECTS = {
   // 24/10/2026 : vague 3 du tri des articles génériques (validée par David), articles passés en brouillon
   '/blog-conseils-strategie-croissance/checklist-pour-evaluer-nouveaux-clients-et-risques-en-b2b': '/blog-conseils-strategie-croissance/due-diligence-commerciale-evaluer-force-de-vente/',
   '/blog-conseils-strategie-croissance/les-erreurs-frequentes-des-startups-en-phase-de-croissance-et-comment-les-eviter': '/blog-conseils-strategie-croissance/pmf-croissance-structurer-equipe-commerciale-product-market-fit/',
-  '/blog-conseils-strategie-croissance/swot-okr-balanced-scorecard-quel-cadre-strategique-choisir': '/blog-conseils-strategie-croissance/lalignement-des-objectifs-commerciaux-avec-la-strategie/',
+  '/blog-conseils-strategie-croissance/swot-okr-balanced-scorecard-quel-cadre-strategique-choisir': '/blog-conseils-strategie-croissance/okr-force-de-vente-objectifs/',
   '/blog-conseils-strategie-croissance/comment-estimer-le-roi-dune-initiative-business-en-quelques-etapes': '/blog-conseils-strategie-croissance/roi-formation-commerciale-comment-mesurer/',
   '/blog-conseils-strategie-croissance/campagnes-dacquisition-et-growth-hacking-methodes-eprouvees': '/blog-conseils-strategie-croissance/alignement-marketing-ventes-b2b/',
-  '/blog-conseils-strategie-croissance/plan-strategique-3-ans-la-methode-complete-pour-pme-et-eti': '/blog-conseils-strategie-croissance/lalignement-des-objectifs-commerciaux-avec-la-strategie/',
+  '/blog-conseils-strategie-croissance/plan-strategique-3-ans-la-methode-complete-pour-pme-et-eti': '/blog-conseils-strategie-croissance/okr-force-de-vente-objectifs/',
   '/blog-conseils-strategie-croissance/experts-comptables-vendre-valeur': '/blog-conseils-strategie-croissance/optimiser-force-commerciale-performance-durable/',
   '/blog-conseils-strategie-croissance/pensee-rapide-et-pensee-lente-la-cle-du-leadership-efficace': '/blog-conseils-strategie-croissance/mentoring-commercial-dirigeant-pourquoi-quand/',
   '/blog-conseils-strategie-croissance/agilite-et-innovation-reussir-dans-un-monde-en-constante': '/blog-conseils-strategie-croissance/vision-entreprise-72-transformations-commerciales-echec/',
@@ -1034,7 +1034,7 @@ const LEGACY_REDIRECTS = {
   '/blog-conseils-strategie-croissance/mesurer-lefficacite-du-funnel-de-vente-a-travers-des-kpis': '/blog-conseils-strategie-croissance/indicateurs-cles-vente-kpis-strategie-commerciale/',
   '/blog-conseils-strategie-croissance/boostez-votre-equipe-commerciale-avec-des-rituels-danimation': '/blog-conseils-strategie-croissance/efficacite-commerciale-cohesion-equipes/',
   '/blog-conseils-strategie-croissance/prospection-les-cles-dune-approche-gagnante': '/blog-conseils-strategie-croissance/maitriser-lart-de-la-prospection-en-b2b/',
-  '/blog-conseils-strategie-croissance/mise-en-place-dokr-et-kpis-operationnels-guide-pratique': '/blog-conseils-strategie-croissance/comment-implementer-les-okr-dans-une-pme-guide-pratique-2026/',
+  '/blog-conseils-strategie-croissance/mise-en-place-dokr-et-kpis-operationnels-guide-pratique': '/blog-conseils-strategie-croissance/okr-force-de-vente-objectifs/',
   '/blog-conseils-strategie-croissance/optimisez-votre-funnel-de-vente-pour-une-efficacite-maximale': '/blog-conseils-strategie-croissance/optimiser-lentonnoir-de-vente-b2b-guide-complet-pour-booster-votre-conversion/',
   '/blog-conseils-strategie-croissance/lart-de-lentretien-annuel-au-sein-dune-equipe': '/blog-conseils-strategie-croissance/entretiens-individuels-annuels-les-astuces-pour-booster/',
   '/blog-conseils-strategie-croissance/strategie-de-partenariats-commerciaux-comment-reussir-vos-alliances-b2b': '/blog-conseils-strategie-croissance/engager-partenaires-b2b/',
@@ -1047,6 +1047,9 @@ const LEGACY_REDIRECTS = {
   '/blog-conseils-strategie-croissance/champ-la-nouvelle-ere-de-qualification-client': '/blog-conseils-strategie-croissance/bant-vs-meddic-methode-qualification-vente-b2b/',
   '/blog-conseils-strategie-croissance/l-agenda-des-priorites-de-la-vision-a-lexecution': '/blog-conseils-strategie-croissance/maitriser-leadership-startup/',
   '/blog-conseils-strategie-croissance/le-quotidien-reel': '/blog-conseils-strategie-croissance/maitriser-leadership-startup/',
+  // 25/10/2026 : fusion OKR (validée par David)
+  '/blog-conseils-strategie-croissance/lalignement-des-objectifs-commerciaux-avec-la-strategie': '/blog-conseils-strategie-croissance/okr-force-de-vente-objectifs/',
+  '/blog-conseils-strategie-croissance/comment-implementer-les-okr-dans-une-pme-guide-pratique-2026': '/blog-conseils-strategie-croissance/okr-force-de-vente-objectifs/',
   // Fusions du 25/09/2026 (soir) : bilan S1/S2, sales business coach
   '/blog-conseils-strategie-croissance/s2-optimisee-leadership-analyse-plan-action': '/blog-conseils-strategie-croissance/analyse-resultats-s1-s2-victorieux/',
   '/blog-conseils-strategie-croissance/les-sales-business-coach-votre-accelerateur-de-reussite': '/blog-conseils-strategie-croissance/business-partner-commercial/',
