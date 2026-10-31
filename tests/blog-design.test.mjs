@@ -2,11 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {refineBlogDesign} from '../lib/blog-design.mjs';
 test('blog navigation drops Ghost search and membership, keeps article content',()=>{
- const html='<html><head></head><body><header id="gh-navigation"><a class="gh-navigation-logo is-title" href="/blog/">old</a><nav class="gh-navigation-menu"><ul><li>old nav</li></ul></nav><button data-ghost-search>Search</button><script defer src="https://cdn.jsdelivr.net/ghost/portal@~2.72/umd/portal.min.js" data-key="k"></script><script defer src="https://cdn.jsdelivr.net/ghost/sodo-search@~1.9/umd/sodo-search.min.js"></script><div class="gh-navigation-members"><a>old</a></div></header><main><article><span class="bull">—</span>Original article content</article></main></body></html>';
+ const html='<html><head></head><body><header id="gh-navigation"><a class="gh-navigation-logo is-title" href="/blog/">old</a><nav class="gh-navigation-menu"><ul><li>old nav</li></ul></nav><button data-ghost-search>Search</button><script defer src="https://cdn.jsdelivr.net/ghost/portal@~2.72/umd/portal.min.js" data-key="k"></script><script defer src="https://cdn.jsdelivr.net/ghost/sodo-search@~1.9/umd/sodo-search.min.js"></script><div class="gh-navigation-members"><a>old</a></div></header><section class="gh-footer-signup"><form data-members-form>x</form></section><main><article><span class="bull">—</span>Original article content</article></main></body></html>';
  const result=refineBlogDesign(html);
- for(const marker of ['kg-blog-mobile-pulse','Original article content'])assert.ok(result.includes(marker));
+ for(const marker of ['kg-blog-mobile-pulse','Original article content','kg-source-20261031.js'])assert.ok(result.includes(marker));
  assert.ok(result.includes('<span class="bull">•</span>'));
- for(const gone of ['—','data-ghost-search','data-portal','portal.min.js','sodo-search'])assert.ok(!result.includes(gone),gone);
+ for(const gone of ['—','gh-footer-signup','data-members-form','data-ghost-search','data-portal','portal.min.js','sodo-search'])assert.ok(!result.includes(gone),gone);
  assert.equal(refineBlogDesign(result),result);
 });
 import {addPulseCta, relatedArticles} from '../lib/blog-design.mjs';
@@ -24,4 +24,16 @@ test('every mapped article gets at least one inbound related link',()=>{
  for(const s of Object.keys(BLOG_CLUSTERS)) for(const r of relatedArticles(s)) inbound[r]=(inbound[r]||0)+1;
  const missing=Object.keys(BLOG_CLUSTERS).filter(s=>!inbound[s]);
  assert.deepEqual(missing,[]);
+});
+import {addReadingAids} from '../lib/blog-design.mjs';
+test('reading aids: skip link everywhere, update date and progress bar on posts only',()=>{
+ const art='<html><head><meta property="article:published_time" content="2026-09-24T19:38:05.000Z"><meta property="article:modified_time" content="2026-10-25T22:00:00.000Z"></head><body class="post-template tag-x"><main class="gh-main"><time class="gh-article-meta-date" datetime="2026-09-24">24 sept. 2026</time><section class="gh-content">x</section></main></body></html>';
+ const r=addReadingAids(art);
+ for(const m of ['class="kg-skip" href="#kg-contenu"','id="kg-contenu"','Mis à jour le <time datetime="2026-10-25">25 oct. 2026</time>','kg-progress','scaleX'])assert.ok(r.includes(m),m);
+ assert.ok(!r.includes('—'));
+ assert.equal(addReadingAids(r),r);
+ const same=addReadingAids(art.replace('2026-10-25T22:00:00.000Z','2026-09-24T21:00:00.000Z'));
+ assert.ok(!same.includes('Mis à jour'));
+ const home=addReadingAids('<html><head></head><body class="home-template"><main class="gh-main">x</main></body></html>');
+ assert.ok(home.includes('kg-skip'));assert.ok(!home.includes('class="kg-progress"'));
 });
